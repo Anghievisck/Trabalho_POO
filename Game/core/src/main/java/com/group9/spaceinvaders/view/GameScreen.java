@@ -9,6 +9,9 @@ import com.badlogic.gdx.graphics.Color;
 import com.group9.spaceinvaders.model.Player;
 import com.group9.spaceinvaders.controller.PlayerController;
 
+import com.group9.spaceinvaders.model.PlayerBullet;
+import com.group9.spaceinvaders.controller.PlayerBulletController;
+
 // 1. Importando as novas classes do Swarm
 import com.group9.spaceinvaders.model.Swarm;
 import com.group9.spaceinvaders.controller.SwarmController;
@@ -74,6 +77,7 @@ public class GameScreen extends ScreenAdapter {
                     shapeRenderer.rect(enemy.bounds.x, enemy.bounds.y, enemy.bounds.width, enemy.bounds.height);
                 }
             }
+        }
 
         // Desenha o Tiro (Branco)
         shapeRenderer.setColor(Color.WHITE);
@@ -85,8 +89,7 @@ public class GameScreen extends ScreenAdapter {
             playerOne.canShoot = true;
         }
         
-        playerRenderer.end();
-        playerBulletRenderer.end();
+        shapeRenderer.end();
     }
 
     @Override
