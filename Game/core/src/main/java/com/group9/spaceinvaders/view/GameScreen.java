@@ -20,12 +20,16 @@ public class GameScreen extends ScreenAdapter {
 
     // 2. Declarando o Swarm e seu Controller
     private Swarm swarm;
-    private SwarmController swarmController;
-    
-    private ShapeRenderer shapeRenderer;
+    private SwarmController swarmController;  
+    private PlayerBullet playerBullet;
+    private PlayerBulletController playerBulletController;
 
+    private ShapeRenderer shapeRenderer;
+  
     public GameScreen() {
         playerOne = new Player(300, 50, 50, 50);
+        playerBullet = new PlayerBullet(-10, -10, 5, 15);
+
         playerOneController = new PlayerController(playerOne);
 
         // 3. Inicializa a nuvem de inimigos
@@ -36,6 +40,7 @@ public class GameScreen extends ScreenAdapter {
         // O Controller precisa da largura da tela. 
         // O Gdx.graphics.getWidth() pega o tamanho exato da janela do seu jogo!
         swarmController = new SwarmController(swarm, Gdx.graphics.getWidth());
+        playerBulletController = new PlayerBulletController(playerBullet);
 
         shapeRenderer = new ShapeRenderer();
     }
@@ -45,6 +50,7 @@ public class GameScreen extends ScreenAdapter {
         // --- 4. FASE DE ATUALIZAÇÃO LÓGICA (CONTROLLERS) ---
         playerOneController.update(delta);
         swarmController.update(delta); // Faz o zigue-zague matemático acontecer
+        playerBulletController.update(playerOne, delta);
 
         // --- 5. FASE DE DESENHO (VIEW) ---
         ScreenUtils.clear(0, 0, 0, 1);
@@ -68,9 +74,19 @@ public class GameScreen extends ScreenAdapter {
                     shapeRenderer.rect(enemy.bounds.x, enemy.bounds.y, enemy.bounds.width, enemy.bounds.height);
                 }
             }
+
+        // Desenha o Tiro (Branco)
+        shapeRenderer.setColor(Color.WHITE);
+        
+        if(playerBullet.isValid){
+            playerOne.canShoot = false;
+            shapeRenderer.rect(playerBullet.bounds.x, playerBullet.bounds.y, playerBullet.bounds.width, playerBullet.bounds.height);
+        } else {
+            playerOne.canShoot = true;
         }
         
-        shapeRenderer.end();
+        playerRenderer.end();
+        playerBulletRenderer.end();
     }
 
     @Override
