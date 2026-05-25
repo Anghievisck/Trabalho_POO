@@ -4,14 +4,14 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Rectangle;
 
 public class PlayerBullet {
-    private Rectangle bounds;
+    public Rectangle bounds;
 
-    private float speed = 150f; 
+    private float speed = 250f; 
 
-    public boolean isValid = true;
+    public boolean isValid = false;
 
-    public PlayerBullet(float posX, float posY){
-        this.bounds = new Rectangle(posX, posY, 5, 10);
+    public PlayerBullet(float posX, float posY, int width, int height){
+        this.bounds = new Rectangle(posX, posY, width, height);
     }
 
     public void Move(float delta){
