@@ -2,7 +2,7 @@ package com.group9.spaceinvaders.lwjgl3;
 
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
-import com.group9.spaceinvaders.SpaceInvadersGame;
+import com.group9.spaceinvaders.view.SpaceInvadersGame;
 
 /** Launches the desktop (LWJGL3) application. */
 public class Lwjgl3Launcher {
