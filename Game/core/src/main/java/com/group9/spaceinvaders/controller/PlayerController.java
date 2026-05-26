@@ -23,8 +23,11 @@ public class PlayerController {
         }
         for(EnemyBullet bullet : bullets){
             if(player.checkCollision(bullet)){
-                player.isAlive = false;
                 bullet.isValid = false;
+                player.lives--;
+                if(player.lives <= 0){
+                    player.isAlive = false;
+                }
             }
         }
     }

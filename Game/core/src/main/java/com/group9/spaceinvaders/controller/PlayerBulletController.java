@@ -24,6 +24,7 @@ public class PlayerBulletController {
             bullet.isValid = true;
             bullet.bounds.x = player.bounds.x + (player.bounds.width / 2);
             bullet.bounds.y = player.bounds.y + player.bounds.height;
+            bullet.player = player;
         } 
     }
 }

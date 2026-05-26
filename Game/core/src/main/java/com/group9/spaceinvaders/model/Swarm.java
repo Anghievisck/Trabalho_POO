@@ -10,22 +10,23 @@ public class Swarm {
     public Enemy[][] enemies;
     
     // Configurações do Swarm
-    public int rows = 5;
-    public int cols = 11;
-    public float speed = 15f; // Pixels por segundo
+    public int rows = 1;
+    public int cols = 1;
+    public float speed = 15; // Pixels por segundo
     public boolean movingRight = true; // Direção atual do movimento
     public int aliveCount = rows * cols; // Quantos inimigos ainda estão vivos
     
     // Quanto o swarm desce quando bate na parede
     public float dropDistance = 15f; 
 
-    public Swarm(float startX, float startY, float enemyWidth, float enemyHeight, float padding) {
+    public Swarm(float startX, float startY, float enemyWidth, float enemyHeight, float padding, float speedModifier) {
         enemies = new Enemy[rows][cols];
         
         // Calcula a largura e altura total do retângulo gigante do Swarm
         float totalWidth = (cols * enemyWidth) + ((cols - 1) * padding);
         float totalHeight = (rows * enemyHeight) + ((rows - 1) * padding);
-        
+        speed = speedModifier*speed;
+
         this.bounds = new Rectangle(startX, startY, totalWidth, totalHeight);
 
         // Preenche o grid com os inimigos
@@ -41,6 +42,16 @@ public class Swarm {
             }
         }
     }
+    // public void reset() {
+    //     aliveCount = rows * cols;
+    //     for (int r = 0; r < rows; r++) {
+    //         for (int c = 0; c < cols; c++) {
+    //             enemies[r][c].isAlive = true;
+    //             enemies[r][c].bounds.x = bounds.x + (c * (enemies[r][c].bounds.width + 15));
+    //             enemies[r][c].bounds.y = bounds.y + bounds.height - enemies[r][c].bounds.height - (r * (enemies[r][c].bounds.height + 15));
+    //         }
+    //     }
+    // }
 
     // Move tanto a bounding box global quanto cada inimigo vivo
     public void move(float deltaX, float deltaY) {

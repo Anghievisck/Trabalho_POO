@@ -15,6 +15,9 @@ public class Player {
     public int rightKey;
     public int shootKey;
 
+    public int points = 0;
+    public int lives = 3;
+    
     public Player(float startX, float startY, int width, int height, int leftRight, int rightRight, int shootKey) {
         // Inicializa a nave com 50x50 pixels
         this.bounds = new Rectangle(startX, startY, width, height);

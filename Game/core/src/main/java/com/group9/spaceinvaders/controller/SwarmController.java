@@ -43,6 +43,7 @@ public class SwarmController {
                         if (enemy.checkCollision(bullet)) {
                             enemy.isAlive = false;
                             bullet.isValid = false;
+                            bullet.player.points += 10; // Adiciona pontos ao jogador
                             swarm.aliveCount--; // Decrementa o contador de inimigos vivos
                         }
                     }
@@ -61,4 +62,5 @@ public class SwarmController {
             swarm.move(moveX, 0);
         }
     }
+
 }

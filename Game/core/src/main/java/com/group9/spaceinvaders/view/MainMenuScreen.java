@@ -47,7 +47,7 @@ public class MainMenuScreen extends ScreenAdapter {
         // Se o jogador apertar a tecla ENTER (ou SPACE), iniciamos o jogo
         if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER) || Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
             // Troca a tela atual para a GameScreen
-            game.setScreen(new GameScreen());
+            game.setScreen(new GameScreen(20));
             
             // Descarta os recursos do menu da memória, pois não precisamos mais deles
             dispose(); 

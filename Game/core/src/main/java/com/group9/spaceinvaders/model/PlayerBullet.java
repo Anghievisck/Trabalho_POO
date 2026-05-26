@@ -9,6 +9,8 @@ public class PlayerBullet {
     private float speed = 250f; 
 
     public boolean isValid = false;
+    
+    public Player player;
 
     public PlayerBullet(float posX, float posY, int width, int height) {
         this.bounds = new Rectangle(posX, posY, width, height);
