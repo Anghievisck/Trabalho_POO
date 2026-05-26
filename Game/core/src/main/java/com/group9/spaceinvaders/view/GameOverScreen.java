@@ -9,7 +9,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.ScreenUtils;
 
-public class MainMenuScreen extends ScreenAdapter {
+public class GameOverScreen extends ScreenAdapter {
     // Referência ao jogo principal para podermos trocar de tela depois
     private SpaceInvadersGame game; 
 
@@ -19,13 +19,17 @@ public class MainMenuScreen extends ScreenAdapter {
     private BitmapFont font;
 
     // As caixas de colisão matemáticas dos nossos botões
-    private Rectangle btnNovoJogo;
-    private Rectangle btnDoisJogadores;
-    private Rectangle btnCarregar;
-    private Rectangle btnSair;
+    private Rectangle btnTentarNovamente;
+    private Rectangle btnVoltar;
 
-    public MainMenuScreen(SpaceInvadersGame game) {
+    private int difficulty;
+    private boolean twoPlayers;
+
+    public GameOverScreen(SpaceInvadersGame game, boolean won, boolean twoPlayers, int difficulty){
         this.game = game;
+        this.difficulty = difficulty;
+        this.twoPlayers = twoPlayers;
+
         shapeRenderer = new ShapeRenderer();
         batch = new SpriteBatch();
         font = new BitmapFont(); 
@@ -42,10 +46,8 @@ public class MainMenuScreen extends ScreenAdapter {
         float startX = (sw - btnWidth) / 2; // Centraliza no eixo X
 
         // Posicionando os botões de cima para baixo
-        btnNovoJogo = new Rectangle(startX, sh - 200, btnWidth, btnHeight);
-        btnDoisJogadores = new Rectangle(startX, sh - 280, btnWidth, btnHeight);
-        btnCarregar = new Rectangle(startX, sh - 360, btnWidth, btnHeight);
-        btnSair = new Rectangle(startX, sh - 440, btnWidth, btnHeight);
+        btnTentarNovamente = new Rectangle(startX, sh - 200, btnWidth, btnHeight);
+        btnVoltar = new Rectangle(startX, sh - 280, btnWidth, btnHeight);
     }
 
     @Override
@@ -59,18 +61,13 @@ public class MainMenuScreen extends ScreenAdapter {
         // Primeiro pintamos os retângulos de fundo
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         shapeRenderer.setColor(Color.DARK_GRAY);
-        shapeRenderer.rect(btnNovoJogo.x, btnNovoJogo.y, btnNovoJogo.width, btnNovoJogo.height);
-        shapeRenderer.rect(btnDoisJogadores.x, btnDoisJogadores.y, btnDoisJogadores.width, btnDoisJogadores.height);
-        shapeRenderer.rect(btnCarregar.x, btnCarregar.y, btnCarregar.width, btnCarregar.height);
-        shapeRenderer.rect(btnSair.x, btnSair.y, btnSair.width, btnSair.height);
+        shapeRenderer.rect(btnTentarNovamente.x, btnTentarNovamente.y, btnTentarNovamente.width, btnTentarNovamente.height);
+        shapeRenderer.rect(btnVoltar.x, btnVoltar.y, btnVoltar.width, btnVoltar.height);
         shapeRenderer.end();
 
-        // Depois pintamos os textos por cima (usando offsets fixos para "centralizar" o texto)
         batch.begin();
-        font.draw(batch, "Novo Jogo", btnNovoJogo.x + 90, btnNovoJogo.y + 35);
-        font.draw(batch, "Novo Jogo (2-Jogadores)", btnDoisJogadores.x + 20, btnDoisJogadores.y + 35);
-        font.draw(batch, "Carregar Jogo Salvo", btnCarregar.x + 50, btnCarregar.y + 35);
-        font.draw(batch, "Sair", btnSair.x + 130, btnSair.y + 35);
+        font.draw(batch, "Tentar Novamente", btnTentarNovamente.x + 90, btnTentarNovamente.y + 35);
+        font.draw(batch, "Voltar para o Menu", btnVoltar.x + 20, btnVoltar.y + 35);
         batch.end();
     }
 
@@ -86,15 +83,11 @@ public class MainMenuScreen extends ScreenAdapter {
             float touchY = Gdx.graphics.getHeight() - Gdx.input.getY();
 
             // O método .contains() da classe Rectangle verifica se o ponto X,Y está dentro dele
-            if (btnNovoJogo.contains(touchX, touchY)) {
+            if (btnTentarNovamente.contains(touchX, touchY)) {
                 // Inicia o jogo principal!
-                game.setScreen(new GameScreen(this.game, 1, false));
-            } else if (btnDoisJogadores.contains(touchX, touchY)) {
-                game.setScreen(new GameScreen(this.game, 1, true));
-            } else if (btnCarregar.contains(touchX, touchY)) {
-                System.out.println("Carregamento em breve...");
-            } else if (btnSair.contains(touchX, touchY)) {
-                Gdx.app.exit(); // Fecha a janela do jogo
+                game.setScreen(new GameScreen(game, difficulty, this.twoPlayers));
+            } else if (btnVoltar.contains(touchX, touchY)) {
+                game.setScreen(new MainMenuScreen(game));
             }
         }
     }

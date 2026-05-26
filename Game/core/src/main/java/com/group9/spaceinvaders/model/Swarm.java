@@ -10,8 +10,8 @@ public class Swarm {
     public Enemy[][] enemies;
     
     // Configurações do Swarm
-    public int rows = 1;
-    public int cols = 1;
+    public int rows = 5;
+    public int cols = 11;
     public float speed = 15; // Pixels por segundo
     public boolean movingRight = true; // Direção atual do movimento
     public int aliveCount = rows * cols; // Quantos inimigos ainda estão vivos
