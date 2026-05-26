@@ -10,7 +10,7 @@ public class PlayerBullet {
 
     public boolean isValid = false;
 
-    public PlayerBullet(float posX, float posY, int width, int height){
+    public PlayerBullet(float posX, float posY, int width, int height) {
         this.bounds = new Rectangle(posX, posY, width, height);
     }
 

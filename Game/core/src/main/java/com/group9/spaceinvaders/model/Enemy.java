@@ -2,6 +2,7 @@ package com.group9.spaceinvaders.model;
 
 import com.badlogic.gdx.math.Rectangle;
 
+
 public class Enemy {
     public Rectangle bounds;
     public boolean isAlive = true;

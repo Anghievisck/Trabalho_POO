@@ -7,6 +7,7 @@ import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.Input;
 
 import com.group9.spaceinvaders.model.Player;
 import com.group9.spaceinvaders.controller.PlayerController;
@@ -24,7 +25,10 @@ import com.group9.spaceinvaders.model.Enemy;
 
 public class GameScreen extends ScreenAdapter {
     private Player playerOne;
+    private Player playerTwo;
+
     private PlayerController playerOneController;
+    private PlayerController playerTwoController;
 
     // 1. Declarando as listas que terao os objetos
     
@@ -37,12 +41,19 @@ public class GameScreen extends ScreenAdapter {
     private ShapeRenderer shapeRenderer;
   
     public GameScreen() {
-        playerOne = new Player(300, 50, 50, 50);
-        playerBullets.add(new PlayerBullet(-10, -10, 5, 15));
+        playerOne = new Player(300, 50, 50, 50,  Input.Keys.LEFT, Input.Keys.RIGHT, Input.Keys.SPACE);
+        playerOneController = new PlayerController(playerOne);
+
+        playerTwo = new Player(500, 50, 50, 50, Input.Keys.A, Input.Keys.D, Input.Keys.W);
+        playerTwoController = new PlayerController(playerTwo);
+
+        for(int i = 0; i < 5; i++){
+            playerBullets.add(new PlayerBullet(-10, -10, 5, 15));
+        }
+        
         for(int i = 0; i < 5; i++){
             enemyBullets.add(new EnemyBullet(-10, -10, 5, 15));
         }
-        playerOneController = new PlayerController(playerOne);
 
         // 3. Inicializa a nuvem de inimigos
         // Parâmetros: startX, startY, width, height, padding (espaçamento)
@@ -53,6 +64,8 @@ public class GameScreen extends ScreenAdapter {
         // O Gdx.graphics.getWidth() pega o tamanho exato da janela do seu jogo!
         swarmControllers.add(new SwarmController(swarms.get(0), Gdx.graphics.getWidth()));
         playerBulletControllers.add(new PlayerBulletController(playerBullets.get(0)));
+        playerBulletControllers.add(new PlayerBulletController(playerBullets.get(1)));
+
         for(int i = 0; i < 5; i++){
             enemyBulletControllers.add(new EnemyBulletController(enemyBullets.get(i)));
         }
@@ -62,11 +75,17 @@ public class GameScreen extends ScreenAdapter {
     @Override
     public void render(float delta) {
         // --- 4. FASE DE ATUALIZAÇÃO LÓGICA (CONTROLLERS) ---
-        playerOneController.update(delta, enemyBullets.get(0)); // Lê o teclado e move a nave
-        swarmControllers.get(0).update(delta, playerBullets.get(0)); // Faz o zigue-zague matemático acontecer
+        playerOneController.update(delta, enemyBullets); // Lê o teclado e move a nave
+        playerTwoController.update(delta, enemyBullets); // Lê o teclado e move a nave
+
+        swarmControllers.get(0).update(delta, playerBullets); // Faz o zigue-zague matemático acontecer
         
         playerBulletControllers.get(0).PlayerShootUpdate(playerOne);
         playerBulletControllers.get(0).update(delta);
+
+        playerBulletControllers.get(1).PlayerShootUpdate(playerTwo);
+        playerBulletControllers.get(1).update(delta);
+
         for(int i = 0; i < 5; i++){
             enemyBulletControllers.get(i).EnemyShootUpdate(swarms.get(0));
             enemyBulletControllers.get(i).update(delta);
@@ -80,6 +99,9 @@ public class GameScreen extends ScreenAdapter {
         // Desenha o Player (Verde)
         shapeRenderer.setColor(Color.GREEN);
         shapeRenderer.rect(playerOne.bounds.x, playerOne.bounds.y, playerOne.bounds.width, playerOne.bounds.height);
+
+        shapeRenderer.setColor(Color.BLUE);
+        shapeRenderer.rect(playerTwo.bounds.x, playerTwo.bounds.y, playerTwo.bounds.width, playerTwo.bounds.height);
 
         // Desenha o Swarm (Vermelho)
         shapeRenderer.setColor(Color.RED);
@@ -110,6 +132,12 @@ public class GameScreen extends ScreenAdapter {
             shapeRenderer.rect(playerBullets.get(0).bounds.x, playerBullets.get(0).bounds.y, playerBullets.get(0).bounds.width, playerBullets.get(0).bounds.height);
         } else {
             playerOne.canShoot = true;
+        }
+        if(playerBullets.get(1).isValid){
+            playerTwo.canShoot = false;
+            shapeRenderer.rect(playerBullets.get(1).bounds.x, playerBullets.get(1).bounds.y, playerBullets.get(1).bounds.width, playerBullets.get(1).bounds.height);
+        } else {
+            playerTwo.canShoot = true;
         }
         
         shapeRenderer.end();

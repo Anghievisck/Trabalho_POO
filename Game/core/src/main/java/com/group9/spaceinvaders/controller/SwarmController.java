@@ -3,6 +3,9 @@ package com.group9.spaceinvaders.controller;
 import com.group9.spaceinvaders.model.Enemy;
 import com.group9.spaceinvaders.model.PlayerBullet;
 import com.group9.spaceinvaders.model.Swarm;
+import java.util.List;
+
+
 
 public class SwarmController {
     private Swarm swarm;
@@ -13,7 +16,7 @@ public class SwarmController {
         this.screenWidth = screenWidth;
     }
 
-    public void update(float delta, PlayerBullet playerBullet) {
+    public void update(float delta, List<PlayerBullet> playerBullets) {
         float moveX = swarm.speed * delta;
         if (!swarm.movingRight) {
             moveX = -moveX; 
@@ -36,10 +39,12 @@ public class SwarmController {
                         hitEdge = true;
                         break; 
                     }
-                    if (enemy.checkCollision(playerBullet)) {
-                        enemy.isAlive = false;
-                        playerBullet.isValid = false;
-                        swarm.aliveCount--; // Decrementa o contador de inimigos vivos
+                    for (PlayerBullet bullet : playerBullets) {
+                        if (enemy.checkCollision(bullet)) {
+                            enemy.isAlive = false;
+                            bullet.isValid = false;
+                            swarm.aliveCount--; // Decrementa o contador de inimigos vivos
+                        }
                     }
                 }
             }

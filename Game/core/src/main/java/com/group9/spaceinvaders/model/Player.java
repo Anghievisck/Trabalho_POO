@@ -1,6 +1,6 @@
 package com.group9.spaceinvaders.model;
-
 import com.badlogic.gdx.math.Rectangle;
+
 
 public class Player {
     // A Bounding Box matemática da nossa nave (guarda X, Y, Largura e Altura)
@@ -10,10 +10,17 @@ public class Player {
     public float speed = 300f; 
     public boolean canShoot = true;
     public boolean isAlive = true;
+    
+    public int leftKey;
+    public int rightKey;
+    public int shootKey;
 
-    public Player(float startX, float startY, int width, int height) {
+    public Player(float startX, float startY, int width, int height, int leftRight, int rightRight, int shootKey) {
         // Inicializa a nave com 50x50 pixels
-        this.bounds = new Rectangle(startX, startY, width, height); 
+        this.bounds = new Rectangle(startX, startY, width, height);
+        this.leftKey = leftRight;
+        this.rightKey = rightRight;
+        this.shootKey = shootKey; 
     }
 
     // O Model fornece as regras de como a entidade pode ser alterada

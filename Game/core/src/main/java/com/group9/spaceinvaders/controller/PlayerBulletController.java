@@ -1,7 +1,7 @@
 package com.group9.spaceinvaders.controller;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
+
 import com.group9.spaceinvaders.model.Player;
 import com.group9.spaceinvaders.model.PlayerBullet;
 
@@ -20,7 +20,7 @@ public class PlayerBulletController {
         }
     }
     public void PlayerShootUpdate(Player player){
-        if(player.canShoot && Gdx.input.isKeyJustPressed(Input.Keys.SPACE)){
+        if(player.canShoot && Gdx.input.isKeyJustPressed(player.shootKey)){
             bullet.isValid = true;
             bullet.bounds.x = player.bounds.x + (player.bounds.width / 2);
             bullet.bounds.y = player.bounds.y + player.bounds.height;
