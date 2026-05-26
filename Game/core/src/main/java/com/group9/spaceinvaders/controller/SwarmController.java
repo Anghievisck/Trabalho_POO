@@ -1,6 +1,7 @@
 package com.group9.spaceinvaders.controller;
 
 import com.group9.spaceinvaders.model.Enemy;
+import com.group9.spaceinvaders.model.PlayerBullet;
 import com.group9.spaceinvaders.model.Swarm;
 
 public class SwarmController {
@@ -12,7 +13,7 @@ public class SwarmController {
         this.screenWidth = screenWidth;
     }
 
-    public void update(float delta) {
+    public void update(float delta, PlayerBullet playerBullet) {
         float moveX = swarm.speed * delta;
         if (!swarm.movingRight) {
             moveX = -moveX; 
@@ -20,11 +21,10 @@ public class SwarmController {
 
         boolean hitEdge = false;
 
-        // 1. O SEU MÉTODO: Varre o grid para ver se algum alien VIVO bate na parede
+        // 1. Varre o grid para ver se algum alien VIVO bate na parede
         for (int r = 0; r < swarm.rows; r++) {
             for (int c = 0; c < swarm.cols; c++) {
                 Enemy enemy = swarm.enemies[r][c];
-                
                 if (enemy.isAlive) {
                     // Se indo para a direita, checa a borda direita do inimigo
                     if (swarm.movingRight && (enemy.bounds.x + enemy.bounds.width + moveX > screenWidth)) {
@@ -35,6 +35,11 @@ public class SwarmController {
                     else if (!swarm.movingRight && (enemy.bounds.x + moveX < 0)) {
                         hitEdge = true;
                         break; 
+                    }
+                    if (enemy.checkCollision(playerBullet)) {
+                        enemy.isAlive = false;
+                        playerBullet.isValid = false;
+                        swarm.aliveCount--; // Decrementa o contador de inimigos vivos
                     }
                 }
             }

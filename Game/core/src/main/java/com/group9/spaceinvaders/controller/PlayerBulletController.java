@@ -14,11 +14,12 @@ public class PlayerBulletController {
 
     // O parâmetro 'delta' é o tempo (em frações de segundo) desde o último frame.
     // Isso garante que a nave mova na mesma velocidade num PC da NASA ou no seu i5.
-    public void update(Player player, float delta) {
+    public void update(float delta) {
         if(bullet.isValid){
             bullet.Move(delta);
         }
-
+    }
+    public void PlayerShootUpdate(Player player){
         if(player.canShoot && Gdx.input.isKeyJustPressed(Input.Keys.SPACE)){
             bullet.isValid = true;
             bullet.bounds.x = player.bounds.x + (player.bounds.width / 2);

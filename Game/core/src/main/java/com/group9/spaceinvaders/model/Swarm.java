@@ -14,6 +14,7 @@ public class Swarm {
     public int cols = 11;
     public float speed = 15f; // Pixels por segundo
     public boolean movingRight = true; // Direção atual do movimento
+    public int aliveCount = rows * cols; // Quantos inimigos ainda estão vivos
     
     // Quanto o swarm desce quando bate na parede
     public float dropDistance = 15f; 
@@ -45,7 +46,6 @@ public class Swarm {
     public void move(float deltaX, float deltaY) {
         bounds.x += deltaX;
         bounds.y += deltaY;
-
         for (int r = 0; r < rows; r++) {
             for (int c = 0; c < cols; c++) {
                 if (enemies[r][c].isAlive) {

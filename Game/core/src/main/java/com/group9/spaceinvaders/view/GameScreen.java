@@ -12,6 +12,9 @@ import com.group9.spaceinvaders.controller.PlayerController;
 import com.group9.spaceinvaders.model.PlayerBullet;
 import com.group9.spaceinvaders.controller.PlayerBulletController;
 
+import com.group9.spaceinvaders.model.EnemyBullet;
+import com.group9.spaceinvaders.controller.EnemyBulletController;
+
 // 1. Importando as novas classes do Swarm
 import com.group9.spaceinvaders.model.Swarm;
 import com.group9.spaceinvaders.controller.SwarmController;
@@ -26,13 +29,14 @@ public class GameScreen extends ScreenAdapter {
     private SwarmController swarmController;  
     private PlayerBullet playerBullet;
     private PlayerBulletController playerBulletController;
-
+    private EnemyBullet enemyBullet;
+    private EnemyBulletController enemyBulletController;
     private ShapeRenderer shapeRenderer;
   
     public GameScreen() {
         playerOne = new Player(300, 50, 50, 50);
         playerBullet = new PlayerBullet(-10, -10, 5, 15);
-
+        enemyBullet = new EnemyBullet(-10, -10, 5, 15);
         playerOneController = new PlayerController(playerOne);
 
         // 3. Inicializa a nuvem de inimigos
@@ -44,16 +48,23 @@ public class GameScreen extends ScreenAdapter {
         // O Gdx.graphics.getWidth() pega o tamanho exato da janela do seu jogo!
         swarmController = new SwarmController(swarm, Gdx.graphics.getWidth());
         playerBulletController = new PlayerBulletController(playerBullet);
-
+        enemyBulletController = new EnemyBulletController(enemyBullet);
+        
         shapeRenderer = new ShapeRenderer();
     }
 
     @Override
     public void render(float delta) {
         // --- 4. FASE DE ATUALIZAÇÃO LÓGICA (CONTROLLERS) ---
-        playerOneController.update(delta);
-        swarmController.update(delta); // Faz o zigue-zague matemático acontecer
-        playerBulletController.update(playerOne, delta);
+        playerOneController.update(delta, enemyBullet); // Lê o teclado e move a nave
+        swarmController.update(delta, playerBullet); // Faz o zigue-zague matemático acontecer
+        
+        playerBulletController.PlayerShootUpdate(playerOne);
+        playerBulletController.update(delta);
+        
+        enemyBulletController.EnemyShootUpdate(swarm);
+        enemyBulletController.update(delta);
+        
 
         // --- 5. FASE DE DESENHO (VIEW) ---
         ScreenUtils.clear(0, 0, 0, 1);
@@ -77,6 +88,11 @@ public class GameScreen extends ScreenAdapter {
                     shapeRenderer.rect(enemy.bounds.x, enemy.bounds.y, enemy.bounds.width, enemy.bounds.height);
                 }
             }
+        }
+        // Desenha o Tiro do Inimigo (Vermelho)
+        shapeRenderer.setColor(Color.RED);
+        if(enemyBullet.isValid){
+        shapeRenderer.rect(enemyBullet.bounds.x, enemyBullet.bounds.y, enemyBullet.bounds.width, enemyBullet.bounds.height);
         }
 
         // Desenha o Tiro (Branco)

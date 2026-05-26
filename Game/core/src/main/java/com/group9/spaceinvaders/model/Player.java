@@ -9,6 +9,7 @@ public class Player {
     // Velocidade em pixels por segundo
     public float speed = 300f; 
     public boolean canShoot = true;
+    public boolean isAlive = true;
 
     public Player(float startX, float startY, int width, int height) {
         // Inicializa a nave com 50x50 pixels
@@ -22,5 +23,11 @@ public class Player {
 
     public void moveRight(float delta) {
         bounds.x += speed * delta;
+    }
+    public boolean checkCollision(EnemyBullet bullet){
+        if(this.isAlive && bullet.isValid){
+            return this.bounds.overlaps(bullet.bounds);
+        }
+        return false;
     }
 }

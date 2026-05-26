@@ -9,4 +9,10 @@ public class Enemy {
     public Enemy(float startX, float startY, float width, float height) {
         this.bounds = new Rectangle(startX, startY, width, height);
     }
+    public boolean checkCollision(PlayerBullet bullet){
+        if(this.isAlive && bullet.isValid){
+            return this.bounds.overlaps(bullet.bounds);
+        }
+        return false;
+    }
 }
