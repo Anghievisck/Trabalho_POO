@@ -4,7 +4,7 @@ import com.badlogic.gdx.math.Rectangle;
 
 public class Swarm {
     // A Bounding Box matemática que engloba TODOS os inimigos
-    public Rectangle bounds;
+    public Rectangle hitbox;
     
     // Matriz para guardar nosso grid 5x11
     public Enemy[][] enemies;
@@ -27,7 +27,7 @@ public class Swarm {
         float totalHeight = (rows * enemyHeight) + ((rows - 1) * padding);
         speed = speedModifier*speed;
 
-        this.bounds = new Rectangle(startX, startY, totalWidth, totalHeight);
+        this.hitbox = new Rectangle(startX, startY, totalWidth, totalHeight);
 
         // Preenche o grid com os inimigos
         for (int r = 0; r < rows; r++) {
@@ -47,21 +47,21 @@ public class Swarm {
     //     for (int r = 0; r < rows; r++) {
     //         for (int c = 0; c < cols; c++) {
     //             enemies[r][c].isAlive = true;
-    //             enemies[r][c].bounds.x = bounds.x + (c * (enemies[r][c].bounds.width + 15));
-    //             enemies[r][c].bounds.y = bounds.y + bounds.height - enemies[r][c].bounds.height - (r * (enemies[r][c].bounds.height + 15));
+    //             enemies[r][c].hitbox.x = hitbox.x + (c * (enemies[r][c].hitbox.width + 15));
+    //             enemies[r][c].hitbox.y = hitbox.y + hitbox.height - enemies[r][c].hitbox.height - (r * (enemies[r][c].hitbox.height + 15));
     //         }
     //     }
     // }
 
     // Move tanto a bounding box global quanto cada inimigo vivo
     public void move(float deltaX, float deltaY) {
-        bounds.x += deltaX;
-        bounds.y += deltaY;
+        hitbox.x += deltaX;
+        hitbox.y += deltaY;
         for (int r = 0; r < rows; r++) {
             for (int c = 0; c < cols; c++) {
                 if (enemies[r][c].isAlive) {
-                    enemies[r][c].bounds.x += deltaX;
-                    enemies[r][c].bounds.y += deltaY;
+                    enemies[r][c].hitbox.x += deltaX;
+                    enemies[r][c].hitbox.y += deltaY;
                 }
             }
         }

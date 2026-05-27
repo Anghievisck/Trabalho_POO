@@ -24,8 +24,8 @@ public class EnemyBulletController{
                     cont++;
                     if(cont == rand){
                         bullet.isValid = true;
-                        bullet.bounds.x = swarm.enemies[r][c].bounds.x + (swarm.enemies[r][c].bounds.width / 2);
-                        bullet.bounds.y = swarm.enemies[r][c].bounds.y;
+                        bullet.hitbox.x = swarm.enemies[r][c].hitbox.x + (swarm.enemies[r][c].hitbox.width / 2);
+                        bullet.hitbox.y = swarm.enemies[r][c].hitbox.y;
                     }
                 }
             }

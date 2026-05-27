@@ -22,8 +22,8 @@ public class PlayerBulletController {
     public void PlayerShootUpdate(Player player){
         if(player.canShoot && Gdx.input.isKeyJustPressed(player.shootKey)){
             bullet.isValid = true;
-            bullet.bounds.x = player.bounds.x + (player.bounds.width / 2);
-            bullet.bounds.y = player.bounds.y + player.bounds.height;
+            bullet.hitbox.x = player.hitbox.x + (player.hitbox.width / 2);
+            bullet.hitbox.y = player.hitbox.y + player.hitbox.height;
             bullet.player = player;
         } 
     }

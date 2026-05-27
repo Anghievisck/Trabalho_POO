@@ -4,7 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Rectangle;
 
 public class PlayerBullet {
-    public Rectangle bounds;
+    public Rectangle hitbox;
 
     private float speed = 250f; 
 
@@ -13,13 +13,13 @@ public class PlayerBullet {
     public Player player;
 
     public PlayerBullet(float posX, float posY, int width, int height) {
-        this.bounds = new Rectangle(posX, posY, width, height);
+        this.hitbox = new Rectangle(posX, posY, width, height);
     }
 
     public void Move(float delta){
-        this.bounds.y += speed * delta;
+        this.hitbox.y += speed * delta;
 
-        if(this.bounds.y >= Gdx.graphics.getHeight()){
+        if(this.hitbox.y >= Gdx.graphics.getHeight()){
             this.isValid = false;
         }
     } 

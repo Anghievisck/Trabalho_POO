@@ -7,9 +7,9 @@ public class EnemyBullet extends PlayerBullet {
     public boolean isValid = false;
     @Override
     public void Move(float delta){
-        this.bounds.y += speed * delta;
+        this.hitbox.y += speed * delta;
 
-        if(this.bounds.y <= 0){
+        if(this.hitbox.y <= 0){
             this.isValid = false;
         }
     } 

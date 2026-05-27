@@ -203,11 +203,11 @@ public class GameScreen extends ScreenAdapter {
         
         // Desenha o Player (Verde)
         shapeRenderer.setColor(Color.GREEN);
-        shapeRenderer.rect(playerOne.bounds.x, playerOne.bounds.y, playerOne.bounds.width, playerOne.bounds.height);
+        shapeRenderer.rect(playerOne.hitbox.x, playerOne.hitbox.y, playerOne.hitbox.width, playerOne.hitbox.height);
 
         if(this.twoPlayers){
             shapeRenderer.setColor(Color.BLUE);
-            shapeRenderer.rect(playerTwo.bounds.x, playerTwo.bounds.y, playerTwo.bounds.width, playerTwo.bounds.height);
+            shapeRenderer.rect(playerTwo.hitbox.x, playerTwo.hitbox.y, playerTwo.hitbox.width, playerTwo.hitbox.height);
         }
 
         // Desenha o Swarm (Vermelho)
@@ -219,7 +219,7 @@ public class GameScreen extends ScreenAdapter {
                 Enemy enemy = swarms.get(swarmIndex).enemies[r][c];
                 // Só manda a placa de vídeo desenhar se o inimigo ainda estiver vivo
                 if (enemy.isAlive) {
-                    shapeRenderer.rect(enemy.bounds.x, enemy.bounds.y, enemy.bounds.width, enemy.bounds.height);
+                    shapeRenderer.rect(enemy.hitbox.x, enemy.hitbox.y, enemy.hitbox.width, enemy.hitbox.height);
                 }
             }
         }
@@ -227,7 +227,7 @@ public class GameScreen extends ScreenAdapter {
         shapeRenderer.setColor(Color.RED);
         for(int i = 0; i < NumberShoot; i++){
             if(enemyBullets.get(i).isValid){
-                shapeRenderer.rect(enemyBullets.get(i).bounds.x, enemyBullets.get(i).bounds.y, enemyBullets.get(i).bounds.width, enemyBullets.get(i).bounds.height);
+                shapeRenderer.rect(enemyBullets.get(i).hitbox.x, enemyBullets.get(i).hitbox.y, enemyBullets.get(i).hitbox.width, enemyBullets.get(i).hitbox.height);
             }
         }
 
@@ -236,7 +236,7 @@ public class GameScreen extends ScreenAdapter {
         
         if(playerBullets.get(0).isValid){
             playerOne.canShoot = false;
-            shapeRenderer.rect(playerBullets.get(0).bounds.x, playerBullets.get(0).bounds.y, playerBullets.get(0).bounds.width, playerBullets.get(0).bounds.height);
+            shapeRenderer.rect(playerBullets.get(0).hitbox.x, playerBullets.get(0).hitbox.y, playerBullets.get(0).hitbox.width, playerBullets.get(0).hitbox.height);
         } else {
             playerOne.canShoot = true;
         }
@@ -244,7 +244,7 @@ public class GameScreen extends ScreenAdapter {
         if(this.twoPlayers){
             if(playerBullets.get(1).isValid){
                 playerTwo.canShoot = false;
-                shapeRenderer.rect(playerBullets.get(1).bounds.x, playerBullets.get(1).bounds.y, playerBullets.get(1).bounds.width, playerBullets.get(1).bounds.height);
+                shapeRenderer.rect(playerBullets.get(1).hitbox.x, playerBullets.get(1).hitbox.y, playerBullets.get(1).hitbox.width, playerBullets.get(1).hitbox.height);
             } else {
                 playerTwo.canShoot = true;
             }

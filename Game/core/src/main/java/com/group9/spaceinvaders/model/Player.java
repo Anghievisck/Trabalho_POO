@@ -1,13 +1,14 @@
 package com.group9.spaceinvaders.model;
-import com.badlogic.gdx.math.Rectangle;
 
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
-public class Player {
-    // A Bounding Box matemática da nossa nave (guarda X, Y, Largura e Altura)
-    public Rectangle bounds;
-    
+public class Player extends Entity {
     // Velocidade em pixels por segundo
-    public float speed = 300f; 
+    private float speed = 300f; 
+
+    public int points = 0;
+    public int lives = 3;
+
     public boolean canShoot = true;
     public boolean isAlive = true;
     
@@ -15,12 +16,11 @@ public class Player {
     public int rightKey;
     public int shootKey;
 
-    public int points = 0;
-    public int lives = 3;
     
-    public Player(float startX, float startY, int width, int height, int leftRight, int rightRight, int shootKey) {
+    public Player(float startX, float startY, int width, int height, TextureRegion sprite, int leftRight, int rightRight, int shootKey) {
         // Inicializa a nave com 50x50 pixels
-        this.bounds = new Rectangle(startX, startY, width, height);
+        super(startX, shootKey, width, height, sprite);
+
         this.leftKey = leftRight;
         this.rightKey = rightRight;
         this.shootKey = shootKey; 
@@ -28,15 +28,17 @@ public class Player {
 
     // O Model fornece as regras de como a entidade pode ser alterada
     public void moveLeft(float delta) {
-        bounds.x -= speed * delta;
+        this.x -= speed * delta;
+        this.updateHitbox();
     }
 
     public void moveRight(float delta) {
-        bounds.x += speed * delta;
+        this.x += speed * delta;
+        this.updateHitbox();
     }
     public boolean checkCollision(EnemyBullet bullet){
         if(this.isAlive && bullet.isValid){
-            return this.bounds.overlaps(bullet.bounds);
+            return this.hitbox.overlaps(bullet.hitbox);
         }
         return false;
     }
