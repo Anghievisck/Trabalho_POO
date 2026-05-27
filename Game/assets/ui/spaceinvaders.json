@@ -1,7 +1,13 @@
 {
 com.badlogic.gdx.graphics.g2d.BitmapFont: {
-	DepartureMono: {
-		file: DepartureMono export.fnt
+	DepartureMono18: {
+		file: DepartureMono18.fnt
+		scaledSize: -1
+		markupEnabled: false
+		flip: false
+	}
+	DepartureMono32: {
+		file: DepartureMono32.fnt
 		scaledSize: -1
 		markupEnabled: false
 		flip: false
@@ -14,31 +20,18 @@ com.badlogic.gdx.graphics.Color: {
 		b: 0
 		a: 1
 	}
-}
-com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle: {
-	default: {
-		font: DepartureMono
-		background: background
+	TitleColor: {
+		r: 1
+		g: 0.93333334
+		b: 0
+		a: 1
 	}
 }
 com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle: {
 	default: {
-		parent: default
-		font: DepartureMono
+		font: DepartureMono18
 		up: button_up
 		down: button_down
-	}
-}
-com.badlogic.gdx.scenes.scene2d.ui.TextField$TextFieldStyle: {
-	default: {
-		font: DepartureMono
-		fontColor: Black
-		background: background
-	}
-}
-com.badlogic.gdx.scenes.scene2d.ui.TextTooltip$TextTooltipStyle: {
-	default: {
-		label: default
 	}
 }
 }

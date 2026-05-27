@@ -1,19 +1,26 @@
 
 spaceinvaders.png
-size: 256, 256
+size: 512, 512
 format: RGBA8888
 filter: Linear, Linear
 repeat: none
-DepartureMono export
+DepartureMono18
   rotate: false
-  xy: 1, 115
-  size: 142, 46
-  orig: 142, 46
+  xy: 1, 436
+  size: 506, 69
+  orig: 506, 69
+  offset: 0, 0
+  index: -1
+DepartureMono32
+  rotate: false
+  xy: 1, 251
+  size: 506, 183
+  orig: 506, 183
   offset: 0, 0
   index: -1
 background
   rotate: false
-  xy: 1, 75
+  xy: 21, 231
   size: 18, 18
   split: 5, 5, 5, 5
   pad: 8, 8, 8, 8
@@ -22,7 +29,7 @@ background
   index: -1
 button_down
   rotate: false
-  xy: 1, 95
+  xy: 1, 231
   size: 18, 18
   split: 5, 5, 5, 5
   pad: 8, 8, 8, 8
@@ -31,7 +38,7 @@ button_down
   index: -1
 button_up
   rotate: false
-  xy: 145, 143
+  xy: 1, 211
   size: 18, 18
   split: 5, 5, 5, 5
   pad: 8, 8, 8, 8
