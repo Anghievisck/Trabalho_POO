@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.ScreenUtils;
 
 public class MainMenuScreen extends ScreenAdapter {
@@ -23,6 +24,11 @@ public class MainMenuScreen extends ScreenAdapter {
     private Rectangle btnDoisJogadores;
     private Rectangle btnCarregar;
     private Rectangle btnSair;
+
+    private TextButton btnNewGame;
+    private TextButton btnTwoPlayersNewGame;
+    private TextButton btnLoad;
+    private TextButton btnExit;
 
     public MainMenuScreen(SpaceInvadersGame game) {
         this.game = game;
