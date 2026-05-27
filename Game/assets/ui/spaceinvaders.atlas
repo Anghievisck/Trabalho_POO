@@ -1,0 +1,47 @@
+
+spaceinvaders.png
+size: 512, 512
+format: RGBA8888
+filter: Linear, Linear
+repeat: none
+DepartureMono18
+  rotate: false
+  xy: 1, 436
+  size: 506, 69
+  orig: 506, 69
+  offset: 0, 0
+  index: -1
+DepartureMono32
+  rotate: false
+  xy: 1, 251
+  size: 506, 183
+  orig: 506, 183
+  offset: 0, 0
+  index: -1
+background
+  rotate: false
+  xy: 21, 231
+  size: 18, 18
+  split: 5, 5, 5, 5
+  pad: 8, 8, 8, 8
+  orig: 18, 18
+  offset: 0, 0
+  index: -1
+button_down
+  rotate: false
+  xy: 1, 231
+  size: 18, 18
+  split: 5, 5, 5, 5
+  pad: 8, 8, 8, 8
+  orig: 18, 18
+  offset: 0, 0
+  index: -1
+button_up
+  rotate: false
+  xy: 1, 211
+  size: 18, 18
+  split: 5, 5, 5, 5
+  pad: 8, 8, 8, 8
+  orig: 18, 18
+  offset: 0, 0
+  index: -1

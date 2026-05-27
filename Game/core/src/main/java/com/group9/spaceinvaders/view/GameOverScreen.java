@@ -2,100 +2,77 @@ package com.group9.spaceinvaders.view;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.ScreenUtils;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 public class GameOverScreen extends ScreenAdapter {
-    // Referência ao jogo principal para podermos trocar de tela depois
-    private SpaceInvadersGame game; 
-
-    // Nossos três pintores
-    private ShapeRenderer shapeRenderer;
-    private SpriteBatch batch;
-    private BitmapFont font;
-
-    // As caixas de colisão matemáticas dos nossos botões
-    private Rectangle btnTentarNovamente;
-    private Rectangle btnVoltar;
-
-    private int difficulty;
-    private boolean twoPlayers;
+    // Responsável por desenhar na tela
+    private Stage stage;
 
     public GameOverScreen(SpaceInvadersGame game, boolean won, boolean twoPlayers, int difficulty){
-        this.game = game;
-        this.difficulty = difficulty;
-        this.twoPlayers = twoPlayers;
+        // 1. Configurando o Stage e permitindo que ele receba os cliques do mouse
+        stage = new Stage(new ScreenViewport());
+        Gdx.input.setInputProcessor(stage);
 
-        shapeRenderer = new ShapeRenderer();
-        batch = new SpriteBatch();
-        font = new BitmapFont(); 
-        
-        // Aumentando o tamanho da fonte padrão um pouquinho
-        font.getData().setScale(1.5f);
+        // 2. Resgatando a nossa Skin diretamente do AssetManager central
+        Skin skin = game.assets.get("ui/spaceinvaders.json", Skin.class);
 
-        // Descobrindo o tamanho da tela para centralizar a matemática
-        float sw = Gdx.graphics.getWidth();
-        float sh = Gdx.graphics.getHeight();
+        // 3. Criando uma Table para organizar os botões automaticamente
+        Table table = new Table();
+        table.setFillParent(true); // Faz a tabela ocupar a tela inteira para centralizar tudo
 
-        float btnWidth = 300;
-        float btnHeight = 50;
-        float startX = (sw - btnWidth) / 2; // Centraliza no eixo X
+        TextButton btnTentarNovamente = new TextButton("Tentar Novamente", skin);
+        TextButton btnVoltar = new TextButton("Voltar para o Menu", skin);
 
-        // Posicionando os botões de cima para baixo
-        btnTentarNovamente = new Rectangle(startX, sh - 200, btnWidth, btnHeight);
-        btnVoltar = new Rectangle(startX, sh - 280, btnWidth, btnHeight);
+        btnTentarNovamente.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                game.setScreen(new GameScreen(game, difficulty, twoPlayers));
+            }
+        });
+
+        btnVoltar.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                game.setScreen(new MainMenuScreen(game));
+            }
+        });
+
+        // 6. Adicionando os botões na tabela (definindo o tamanho padrão e um espaçamento)
+        float btnWidth = 300f;
+        float btnHeight = 50f;
+        float padding = 20f;
+
+        table.add(btnTentarNovamente).width(btnWidth).height(btnHeight).padBottom(padding).row();
+        table.add(btnVoltar).width(btnWidth).height(btnHeight).padBottom(padding).row();
+
+        stage.addActor(table);
     }
 
     @Override
     public void render(float delta) {
-        // 1. LÓGICA (O Controller do Menu)
-        handleInput();
+        // Limpa a tela com o fundo preto
+        ScreenUtils.clear(0f, 0f, 0f, 1);
 
-        // 2. DESENHO (A View do Menu)
-        ScreenUtils.clear(0.1f, 0.1f, 0.2f, 1); // Fundo azul marinho escuro
-
-        // Primeiro pintamos os retângulos de fundo
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        shapeRenderer.setColor(Color.DARK_GRAY);
-        shapeRenderer.rect(btnTentarNovamente.x, btnTentarNovamente.y, btnTentarNovamente.width, btnTentarNovamente.height);
-        shapeRenderer.rect(btnVoltar.x, btnVoltar.y, btnVoltar.width, btnVoltar.height);
-        shapeRenderer.end();
-
-        batch.begin();
-        font.draw(batch, "Tentar Novamente", btnTentarNovamente.x + 90, btnTentarNovamente.y + 35);
-        font.draw(batch, "Voltar para o Menu", btnVoltar.x + 20, btnVoltar.y + 35);
-        batch.end();
+        // Atualiza a lógica da UI (animações, hover, cliques) e a desenha na tela
+        stage.act(delta);
+        stage.draw();
     }
 
-    private void handleInput() {
-        // justTouched() verifica se o clique esquerdo do mouse acabou de acontecer
-        if (Gdx.input.justTouched()) {
-            float touchX = Gdx.input.getX();
-            
-            // A ARMADILHA DA LIBGDX: 
-            // O mouse do Windows lê o Y=0 no TOPO da tela.
-            // O desenho da LibGDX lê o Y=0 na BASE da tela.
-            // Precisamos inverter a coordenada Y do clique do mouse!
-            float touchY = Gdx.graphics.getHeight() - Gdx.input.getY();
-
-            // O método .contains() da classe Rectangle verifica se o ponto X,Y está dentro dele
-            if (btnTentarNovamente.contains(touchX, touchY)) {
-                // Inicia o jogo principal!
-                game.setScreen(new GameScreen(game, difficulty, this.twoPlayers));
-            } else if (btnVoltar.contains(touchX, touchY)) {
-                game.setScreen(new MainMenuScreen(game));
-            }
-        }
+    @Override
+    public void resize(int width, int height) {
+        // Garante que a UI se reajuste caso o jogador redimensione a janela
+        stage.getViewport().update(width, height, true);
     }
 
     @Override
     public void dispose() {
-        shapeRenderer.dispose();
-        batch.dispose();
-        font.dispose();
+        stage.dispose();
     }
 }

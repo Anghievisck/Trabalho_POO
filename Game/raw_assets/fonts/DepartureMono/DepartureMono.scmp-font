@@ -1,0 +1,14 @@
+{
+"characters": "",
+"size": 22,
+"mono": true,
+"hinting": "AutoMedium",
+"color": "Black",
+"colorValue": 255,
+"gamma": 1.8,
+"renderCount": 2,
+"borderGamma": 1.8,
+"kerning": true,
+"minFilter": "Nearest",
+"magFilter": "Nearest"
+}
