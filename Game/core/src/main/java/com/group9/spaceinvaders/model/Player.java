@@ -1,5 +1,6 @@
 package com.group9.spaceinvaders.model;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 public class Player extends Entity {
@@ -9,36 +10,42 @@ public class Player extends Entity {
     public int points = 0;
     public int lives = 3;
 
-    public boolean canShoot = true;
-    public boolean isAlive = true;
-    
     public int leftKey;
     public int rightKey;
     public int shootKey;
 
+    public int ammo = 1;
+    public TextureRegion bulletSprite;
     
-    public Player(float startX, float startY, int width, int height, TextureRegion sprite, int leftRight, int rightRight, int shootKey) {
+    public Player(float startX, float startY, int width, int height, TextureRegion sprite, TextureRegion bulletSprite, int leftRight, int rightRight, int shootKey) {
         // Inicializa a nave com 50x50 pixels
-        super(startX, shootKey, width, height, sprite);
+        super(startX, startY, width, height, sprite);
+
+        this.bulletSprite = bulletSprite;
 
         this.leftKey = leftRight;
         this.rightKey = rightRight;
         this.shootKey = shootKey; 
     }
 
-    // O Model fornece as regras de como a entidade pode ser alterada
+    public void update(float delta){
+        float deltaX = speed * delta;
+        if(this.getX() + deltaX >= 0 && this.getX() + deltaX + this.getWidth() <= Gdx.graphics.getWidth()){
+            this.setX(deltaX);
+        }
+    }
+
     public void moveLeft(float delta) {
-        this.x -= speed * delta;
-        this.updateHitbox();
+        this.update(-delta);
     }
 
     public void moveRight(float delta) {
-        this.x += speed * delta;
-        this.updateHitbox();
+        this.update(delta);
     }
-    public boolean checkCollision(EnemyBullet bullet){
-        if(this.isAlive && bullet.isValid){
-            return this.hitbox.overlaps(bullet.hitbox);
+
+    public boolean checkCollision(Bullet bullet){
+        if(this.lives > 0 && bullet.isValid){
+            return this.getHitbox().overlaps(bullet.getHitbox());
         }
         return false;
     }

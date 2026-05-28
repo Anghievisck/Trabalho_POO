@@ -1,11 +1,11 @@
 package com.group9.spaceinvaders.model;
 
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import java.util.List;
+import java.util.ArrayList;
 
 public class Swarm {
-    // A Bounding Box matemática que engloba TODOS os inimigos
-    public Rectangle hitbox;
-    
     // Matriz para guardar nosso grid 5x11
     public Enemy[][] enemies;
     
@@ -19,7 +19,14 @@ public class Swarm {
     // Quanto o swarm desce quando bate na parede
     public float dropDistance = 15f; 
 
-    public Swarm(float startX, float startY, float enemyWidth, float enemyHeight, float padding, float speedModifier) {
+    private enum EnemyType {
+        BASIC,
+        BASIC2,
+        BASIC3
+    };
+
+
+    public Swarm(float startX, float startY, float enemyWidth, float enemyHeight, float padding, float speedModifier,  List<TextureRegion> sprites, int maxHealth, List<TextureRegion> bulletSprites, List<Float> bulletSpeed) {
         enemies = new Enemy[rows][cols];
         
         // Calcula a largura e altura total do retângulo gigante do Swarm
@@ -27,10 +34,18 @@ public class Swarm {
         float totalHeight = (rows * enemyHeight) + ((rows - 1) * padding);
         speed = speedModifier*speed;
 
-        this.hitbox = new Rectangle(startX, startY, totalWidth, totalHeight);
+        EnemyType enemyType;
 
         // Preenche o grid com os inimigos
         for (int r = 0; r < rows; r++) {
+            if(r == 0){
+                enemyType = EnemyType.BASIC;
+            } else if(r > 0 && r < 3){
+                enemyType = EnemyType.BASIC2;
+            } else {
+                enemyType = EnemyType.BASIC3;
+            }
+
             for (int c = 0; c < cols; c++) {
                 // Calcula a posição X e Y de cada inimigo baseado na sua coluna e linha
                 float enemyX = startX + (c * (enemyWidth + padding));
@@ -38,10 +53,11 @@ public class Swarm {
                 // No libGDX, o Y cresce para cima. Aqui estamos colocando a linha 0 no topo.
                 float enemyY = startY + totalHeight - enemyHeight - (r * (enemyHeight + padding));
                 
-                enemies[r][c] = new Enemy(enemyX, enemyY, enemyWidth, enemyHeight);
+                enemies[r][c] = new Enemy(enemyX, enemyY, enemyWidth, enemyHeight, sprites.get(enemyType.ordinal()), maxHealth, bulletSprites.get(enemyType.ordinal()), bulletSpeed.get(enemyType.ordinal()));
             }
         }
     }
+
     // public void reset() {
     //     aliveCount = rows * cols;
     //     for (int r = 0; r < rows; r++) {
@@ -55,13 +71,11 @@ public class Swarm {
 
     // Move tanto a bounding box global quanto cada inimigo vivo
     public void move(float deltaX, float deltaY) {
-        hitbox.x += deltaX;
-        hitbox.y += deltaY;
         for (int r = 0; r < rows; r++) {
             for (int c = 0; c < cols; c++) {
-                if (enemies[r][c].isAlive) {
-                    enemies[r][c].hitbox.x += deltaX;
-                    enemies[r][c].hitbox.y += deltaY;
+                if (enemies[r][c].health > 0) {
+                    enemies[r][c].setX(deltaX);
+                    enemies[r][c].setY(deltaY);
                 }
             }
         }

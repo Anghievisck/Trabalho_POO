@@ -1,50 +1,49 @@
 package com.group9.spaceinvaders.view;
+
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+
+import org.w3c.dom.Text;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 import com.group9.spaceinvaders.model.Player;
 import com.group9.spaceinvaders.controller.PlayerController;
-
-import com.group9.spaceinvaders.model.PlayerBullet;
-import com.group9.spaceinvaders.controller.PlayerBulletController;
-
-import com.group9.spaceinvaders.model.EnemyBullet;
-import com.group9.spaceinvaders.controller.EnemyBulletController;
-
-// 1. Importando as novas classes do Swarm
+import com.group9.spaceinvaders.model.Bullet;
 import com.group9.spaceinvaders.model.Swarm;
 import com.group9.spaceinvaders.controller.SwarmController;
 import com.group9.spaceinvaders.model.Enemy;
 
 public class GameScreen extends ScreenAdapter {
+    private SpaceInvadersGame game;
+    private boolean twoPlayers;
+    private int difficulty;
+
     private Player playerOne;
     private Player playerTwo;
-
-    private boolean twoPlayers;
-
     private PlayerController playerOneController;
     private PlayerController playerTwoController;
 
-    // 1. Declarando as listas que terao os objetos
     private List<Swarm> swarms = new ArrayList<>(); 
     private List<SwarmController> swarmControllers = new ArrayList<>();  
-    private List<PlayerBullet> playerBullets = new ArrayList<>();
-    private List<PlayerBulletController> playerBulletControllers = new ArrayList<>();
-    private List<EnemyBullet> enemyBullets = new ArrayList<>();
-    private List<EnemyBulletController> enemyBulletControllers = new ArrayList<>();
-    private ShapeRenderer shapeRenderer;
-    private int NumberShoot = 5;
+    
+    // A única lista de balas necessária agora!
+    private List<Bullet> activeBullets = new ArrayList<>();
+
+    // Sai o ShapeRenderer, entra o SpriteBatch para desenhar as Texturas
+    private SpriteBatch batch;
   
     private Stage hudStage;
     private Label scoreLabelP1;
@@ -55,81 +54,66 @@ public class GameScreen extends ScreenAdapter {
 
     private boolean nextLevel;
     private int swarmIndex = 0;
-    private int difficulty;
 
-    private SpaceInvadersGame game;
 
     public GameScreen(SpaceInvadersGame game, int difficulty, boolean twoPlayers) {
-        this.twoPlayers = twoPlayers;
         this.game = game;
         this.difficulty = difficulty;
+        this.twoPlayers = twoPlayers;
 
-        playerOne = new Player(300, 50, 50, 50,  Input.Keys.LEFT, Input.Keys.RIGHT, Input.Keys.SPACE);
+        // Inicializa o Pintor
+        batch = new SpriteBatch();
+        TextureAtlas atlas = game.assets.get("sprites/gameplay.atlas", TextureAtlas.class);
+
+        TextureRegion playerSprite = atlas.findRegion("player_placeholder");
+        TextureRegion bulletSprite = atlas.findRegion("bullet_placeholder");
+
+        // NOTA: Como você adicionou TextureRegion nos construtores do Player e do Swarm, 
+        // você precisará passar as imagens corretas aqui (substituindo os "null").
+        playerOne = new Player(300, 50, 50, 50, playerSprite, bulletSprite, Input.Keys.LEFT, Input.Keys.RIGHT, Input.Keys.SPACE);
         playerOneController = new PlayerController(playerOne);
 
         if(this.twoPlayers){
-            playerTwo = new Player(500, 50, 50, 50, Input.Keys.A, Input.Keys.D, Input.Keys.W);
+            playerTwo = new Player(500, 50, 50, 50, playerSprite, bulletSprite, Input.Keys.A, Input.Keys.D, Input.Keys.W);
             playerTwoController = new PlayerController(playerTwo);
         }
 
-        NumberShoot = difficulty;
+        List<TextureRegion> enemySprites = new ArrayList<>();
+        enemySprites.add(atlas.findRegion("enemy_placeholder"));
 
-        for(int i = 0; i < 5; i++){
-            playerBullets.add(new PlayerBullet(-10, -10, 5, 15));
-        }
-        
-        for(int i = 0; i < NumberShoot; i++){
-            enemyBullets.add(new EnemyBullet(-10, -10, 5, 15));
-        }
+        List<TextureRegion> enemyBulletSprites = new ArrayList<>();
+        enemyBulletSprites.add(atlas.findRegion("bullet_placeholder"));
 
-        // 3. Inicializa a nuvem de inimigos
-        // Parâmetros: startX, startY, width, height, padding (espaçamento)
-        // Coloquei Y = 400 para eles começarem na parte de cima da tela
+        List<Float> enemyBulletSpeeds = new ArrayList<>();
+        enemyBulletSpeeds.add(-250f);
+
         for(int i = 0; i < 3; i++){
-            swarms.add(new Swarm(50, 400, 30, 30, 15, i + (float)1.5*difficulty));
-            swarmControllers.add(new SwarmController(swarms.get(i), Gdx.graphics.getWidth()));
+            // Lembre-se de passar a lista de sprites e velocidades corretas no lugar dos nulls
+            swarms.add(new Swarm(50, 400, 30, 30, 15, i + (float)1.5*difficulty, enemySprites, 100, enemyBulletSprites, enemyBulletSpeeds, i));
+            swarmControllers.add(new SwarmController(swarms.get(i), Gdx.graphics.getWidth(), difficulty));
         }
-        
-        // O Controller precisa da largura da tela. 
-        // O Gdx.graphics.getWidth() pega o tamanho exato da janela do seu jogo!
-        playerBulletControllers.add(new PlayerBulletController(playerBullets.get(0)));
-        playerBulletControllers.add(new PlayerBulletController(playerBullets.get(1)));
-
-        for(int i = 0; i < NumberShoot; i++){
-            enemyBulletControllers.add(new EnemyBulletController(enemyBullets.get(i)));
-        }
-        shapeRenderer = new ShapeRenderer();
         
         hudStage = new Stage(new ScreenViewport());
-        // 2. Cria a fonte e o estilo da Label
-        font = new BitmapFont(); // Fonte padrão do LibGDX (branca)
-        font.getData().setScale(1.5f); // Ajusta o tamanho se precisar
+        font = new BitmapFont(); 
+        font.getData().setScale(1.5f); 
         
-        // O estilo define qual fonte e qual cor o texto terá
         Label.LabelStyle labelStyle = new Label.LabelStyle(font, Color.WHITE);
 
-        // 3. Instancia as Labels com o texto inicial
         scoreLabelP1 = new Label("P1: 0", labelStyle);
-
-        // 4. Posiciona na tela (Exemplo: no topo da tela)
         scoreLabelP1.setPosition(20, Gdx.graphics.getHeight() - 40);
-
-        // 5. Adiciona as labels ao palco para que possam ser desenhadas
         hudStage.addActor(scoreLabelP1);
+        
         livesLabelP1 = new Label("Vidas: XXX", labelStyle);
         livesLabelP1.setPosition(180, Gdx.graphics.getHeight() - 40);
-
         hudStage.addActor(livesLabelP1);
 
-        // Realiza o mesmo processo acima para o player 2, se existir.
         if(this.twoPlayers){
             scoreLabelP2 = new Label("P2: 0", labelStyle);
             scoreLabelP2.setPosition(Gdx.graphics.getWidth() - 120, Gdx.graphics.getHeight() - 40);
-
             hudStage.addActor(scoreLabelP2);
+            
             livesLabelP2 = new Label("Vidas: XXX", labelStyle);
             livesLabelP2.setPosition(Gdx.graphics.getWidth() - 280, Gdx.graphics.getHeight() - 40);
-
             hudStage.addActor(livesLabelP2);
         }
     }
@@ -137,135 +121,108 @@ public class GameScreen extends ScreenAdapter {
     @Override
     public void render(float delta) {
         if(nextLevel){
-            if(swarmIndex < 3){
+            if(swarmIndex < 2){ // Alterado de 3 para 2, pois a lista tem tamanho 3 (0, 1, 2)
                 swarmIndex++;
+                nextLevel = false;
             } else {
                 game.setScreen(new GameOverScreen(game, true, twoPlayers, this.difficulty));
+                return; // Impede que o resto do método rode após trocar de tela
             }
         }
-        // --- 4. FASE DE ATUALIZAÇÃO LÓGICA (CONTROLLERS) ---
-        playerOneController.update(delta, enemyBullets); // Lê o teclado e move a nave
+
+        // --- LÓGICA (CONTROLLERS) ---
+        // Passamos a lista geral de balas para todos os controllers interagirem
+        playerOneController.update(delta, activeBullets); 
 
         if(this.twoPlayers){
-            playerTwoController.update(delta, enemyBullets); // Lê o teclado e move a nave
-
-            playerBulletControllers.get(1).PlayerShootUpdate(playerTwo);
-            playerBulletControllers.get(1).update(delta);
-
+            playerTwoController.update(delta, activeBullets); 
             scoreLabelP2.setText("P2: " + playerTwo.points);
-
             livesLabelP2.setText("Vidas: " + formatarVidas(playerTwo.lives));
         }
 
-        swarmControllers.get(swarmIndex).update(delta, playerBullets); // Faz o zigue-zague matemático acontecer
-        
-        playerBulletControllers.get(0).PlayerShootUpdate(playerOne);
-        playerBulletControllers.get(0).update(delta);
-
-
-        for(int i = 0; i < NumberShoot; i++){
-            enemyBulletControllers.get(i).EnemyShootUpdate(swarms.get(0));
-            enemyBulletControllers.get(i).update(delta);
-        }
+        swarmControllers.get(swarmIndex).update(delta, activeBullets); 
 
         scoreLabelP1.setText("P1: " + playerOne.points);
-
-
         livesLabelP1.setText("Vidas: " + formatarVidas(playerOne.lives));
 
-        // Mudar System.out.println para uma mensagem na tela GameOverScreen.java
+        // Verificação de Morte
         if(this.twoPlayers){
             if(playerOne.lives <= 0 && playerTwo.lives <= 0){
                 game.setScreen(new GameOverScreen(game, false, twoPlayers, this.difficulty));
+                return;
             }
         } else {
             if (playerOne.lives <= 0) {
                 game.setScreen(new GameOverScreen(game, false, twoPlayers, this.difficulty));
+                return;
             }
         }
 
-        if(swarms.get(0).aliveCount <= 0){
+        // Verificação de Vitória da Fase
+        if(swarms.get(swarmIndex).aliveCount <= 0){
             playerOne.points += 100;
             playerOne.lives += 1;
-
             if(twoPlayers){
                 playerTwo.points += 100;
                 playerTwo.lives += 1;
             }
-
             nextLevel = true;
         }
 
-        // --- 5. FASE DE DESENHO (VIEW) ---
+        // --- DESENHO (VIEW) ---
         ScreenUtils.clear(0, 0, 0, 1);
 
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        // Iniciamos o lote de pintura
+        batch.begin();
         
-        // Desenha o Player (Verde)
-        shapeRenderer.setColor(Color.GREEN);
-        shapeRenderer.rect(playerOne.hitbox.x, playerOne.hitbox.y, playerOne.hitbox.width, playerOne.hitbox.height);
+        // 1. Desenha os Players (O método draw já existe na classe pai Entity!)
+        if (playerOne.lives > 0) playerOne.draw(batch);
+        if (this.twoPlayers && playerTwo.lives > 0) playerTwo.draw(batch);
 
-        if(this.twoPlayers){
-            shapeRenderer.setColor(Color.BLUE);
-            shapeRenderer.rect(playerTwo.hitbox.x, playerTwo.hitbox.y, playerTwo.hitbox.width, playerTwo.hitbox.height);
-        }
-
-        // Desenha o Swarm (Vermelho)
-        shapeRenderer.setColor(Color.RED);
-        
-        // Percorre a nossa matriz 5x11
-        for (int r = 0; r < swarms.get(swarmIndex).rows; r++) {
-            for (int c = 0; c < swarms.get(swarmIndex).cols; c++) {
-                Enemy enemy = swarms.get(swarmIndex).enemies[r][c];
-                // Só manda a placa de vídeo desenhar se o inimigo ainda estiver vivo
-                if (enemy.isAlive) {
-                    shapeRenderer.rect(enemy.hitbox.x, enemy.hitbox.y, enemy.hitbox.width, enemy.hitbox.height);
+        // 2. Desenha o Swarm atual
+        Swarm currentSwarm = swarms.get(swarmIndex);
+        for (int r = 0; r < currentSwarm.rows; r++) {
+            for (int c = 0; c < currentSwarm.cols; c++) {
+                Enemy enemy = currentSwarm.enemies[r][c];
+                // Checa a health em vez do isAlive (já que removemos o isAlive do Enemy)
+                if (enemy != null && enemy.health > 0) {
+                    enemy.draw(batch);
                 }
             }
         }
-        // Desenha o Tiro do Inimigo (Vermelho)
-        shapeRenderer.setColor(Color.RED);
-        for(int i = 0; i < NumberShoot; i++){
-            if(enemyBullets.get(i).isValid){
-                shapeRenderer.rect(enemyBullets.get(i).hitbox.x, enemyBullets.get(i).hitbox.y, enemyBullets.get(i).hitbox.width, enemyBullets.get(i).hitbox.height);
+
+        // 3. Move, Desenha e Limpa as Balas usando o Iterator
+        Iterator<Bullet> iter = activeBullets.iterator();
+        while(iter.hasNext()){
+            Bullet b = iter.next();
+            b.update(delta); // Voa
+            b.draw(batch);   // Pinta na tela
+            
+            // O Garbage Collector agindo: Se a bala bateu em algo ou saiu da tela, deleta.
+            if(!b.isValid){
+                iter.remove();
             }
         }
 
-        // Desenha o Tiro (Branco)
-        shapeRenderer.setColor(Color.WHITE);
-        
-        if(playerBullets.get(0).isValid){
-            playerOne.canShoot = false;
-            shapeRenderer.rect(playerBullets.get(0).hitbox.x, playerBullets.get(0).hitbox.y, playerBullets.get(0).hitbox.width, playerBullets.get(0).hitbox.height);
-        } else {
-            playerOne.canShoot = true;
-        }
+        batch.end();
 
-        if(this.twoPlayers){
-            if(playerBullets.get(1).isValid){
-                playerTwo.canShoot = false;
-                shapeRenderer.rect(playerBullets.get(1).hitbox.x, playerBullets.get(1).hitbox.y, playerBullets.get(1).hitbox.width, playerBullets.get(1).hitbox.height);
-            } else {
-                playerTwo.canShoot = true;
-            }
-        }
-        
-        shapeRenderer.end();
+        // Desenha a Interface de Usuário por cima do jogo
         hudStage.act(delta);
         hudStage.draw();
     }
 
     private String formatarVidas(int quantidadeVidas) {
         StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < quantidadeVidas; i++) {
-            sb.append("X "); // Use "X ", "<3 " ou "O " como símbolo temporário
+        // Evita imprimir vidas negativas na UI se o jogador tomar dano a mais
+        for (int i = 0; i < Math.max(0, quantidadeVidas); i++) {
+            sb.append("X "); 
         }
         return sb.toString();
     }
 
     @Override
     public void dispose() {
-        shapeRenderer.dispose(); // Mantendo o gerenciamento de memória limpo!
+        batch.dispose(); 
         hudStage.dispose();
         font.dispose();
     }
