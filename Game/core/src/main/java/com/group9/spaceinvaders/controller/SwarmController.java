@@ -11,8 +11,13 @@ import java.util.List;
 public class SwarmController {
     private Swarm swarm;
     private float screenWidth;
+    private int spriteCycle = 0;
 
     public int ammo;
+
+
+    private float timeSinceLastSpriteUpdate = 0f;
+
 
     public SwarmController(Swarm swarm, float screenWidth, int ammo) {
         this.swarm = swarm;
@@ -33,12 +38,20 @@ public class SwarmController {
 
         int cont = 0;
         int rand = MathUtils.random(0, swarm.aliveCount - 1);
+        timeSinceLastSpriteUpdate += delta;
+
         for (int r = 0; r < swarm.rows; r++) {
             for (int c = 0; c < swarm.cols; c++) {
                 Enemy enemy = swarm.enemies[r][c];
 
                 if(enemy.health > 0){
                     cont++;
+                }
+
+                if(timeSinceLastSpriteUpdate >= 30*delta){ 
+                    if(enemy.health > 0){
+                        enemy.updateSprite(swarm.enemySprites.get(spriteCycle));
+                    }
                 }
 
                 hitbox = enemy.getHitbox();
@@ -56,7 +69,7 @@ public class SwarmController {
                         if(bullet.origin instanceof Player){
                             player = (Player)bullet.origin;
                             if (enemy.checkCollision(bullet)) {
-                                enemy.health--;
+                                enemy.health -= bullet.damage;
                                 bullet.isValid = false;
 
                                 if(enemy.health == 0){
@@ -71,16 +84,14 @@ public class SwarmController {
 
                     if(this.ammo > 0){
                         if(cont == rand){
-                            activeBullets.add(new Bullet(enemy.getX() + (enemy.getWidth() / 2), enemy.getY(), 5, 10, enemy.bulletSprite, enemy.bulletSpeed, enemy));
+                            activeBullets.add(new Bullet(enemy.getX() + (enemy.getWidth() / 2), enemy.getY(), 5, 10, enemy.bulletSprite, enemy.bulletSpeed, 1, enemy));
                             this.ammo--;
                         }
                     }
                 }
             }
-
             if (hitEdge) break; // Sai do loop externo também
         }
-
         // 2. Aplica o movimento baseado no resultado
         if (hitEdge) {
             // Inverte a direção e desce a nuvem inteira
@@ -88,7 +99,12 @@ public class SwarmController {
             swarm.move(0, -swarm.dropDistance);
         } else {
             // Caminho livre, continua andando de lado
-            swarm.move(moveX, 0);
+            swarm.move(moveX*delta*30, 0);
+        }
+
+        if(timeSinceLastSpriteUpdate >= 30*delta){
+            spriteCycle = (spriteCycle + 1) % 2;
+            timeSinceLastSpriteUpdate = 0f;
         }
     }
 

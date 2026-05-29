@@ -8,6 +8,7 @@ public class Enemy extends Entity{
     public TextureRegion bulletSprite;
     public float bulletSpeed;
 
+
     public Enemy(float startX, float startY, float width, float height, TextureRegion sprite, int maxHealth, TextureRegion bulletSprite, float bulletSpeed) {
         super(startX, startY, width, height, sprite);
 
@@ -23,6 +24,12 @@ public class Enemy extends Entity{
 
         return false;
     }
+    public void update(float delta){}
 
-    public void update(float delta){};
+    public void updateSprite(TextureRegion NewSprite){
+        if(this.health > 0){
+            this.sprite = NewSprite;
+        }
+    }
+    
 }

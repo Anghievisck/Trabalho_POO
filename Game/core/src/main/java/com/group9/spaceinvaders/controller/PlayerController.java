@@ -29,7 +29,7 @@ public class PlayerController {
             Bullet novaBala = new Bullet(
                 player.getX() + (player.getWidth() / 2), 
                 player.getY() + player.getHeight(), 
-                5, 15, player.bulletSprite, 400f, player
+                5, 15, player.bulletSprite, 400f, 100, player
             );
 
             bullets.add(novaBala);

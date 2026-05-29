@@ -1,9 +1,7 @@
 package com.group9.spaceinvaders.model;
 
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import java.util.List;
-import java.util.ArrayList;
 
 public class Swarm {
     // Matriz para guardar nosso grid 5x11
@@ -15,6 +13,8 @@ public class Swarm {
     public float speed = 15; // Pixels por segundo
     public boolean movingRight = true; // Direção atual do movimento
     public int aliveCount = rows * cols; // Quantos inimigos ainda estão vivos
+    
+    public List<TextureRegion> enemySprites; // Sprites para os inimigos
     
     // Quanto o swarm desce quando bate na parede
     public float dropDistance = 15f; 
@@ -33,12 +33,13 @@ public class Swarm {
         float totalWidth = (cols * enemyWidth) + ((cols - 1) * padding);
         float totalHeight = (rows * enemyHeight) + ((rows - 1) * padding);
         speed = speedModifier*speed;
+        enemySprites = sprites;
 
         EnemyType enemyType;
 
         // Preenche o grid com os inimigos
         for (int r = 0; r < rows; r++) {
-            if(r == 0){
+            if(r < rows){
                 enemyType = EnemyType.BASIC;
             } else if(r > 0 && r < 3){
                 enemyType = EnemyType.BASIC2;
@@ -57,17 +58,6 @@ public class Swarm {
             }
         }
     }
-
-    // public void reset() {
-    //     aliveCount = rows * cols;
-    //     for (int r = 0; r < rows; r++) {
-    //         for (int c = 0; c < cols; c++) {
-    //             enemies[r][c].isAlive = true;
-    //             enemies[r][c].hitbox.x = hitbox.x + (c * (enemies[r][c].hitbox.width + 15));
-    //             enemies[r][c].hitbox.y = hitbox.y + hitbox.height - enemies[r][c].hitbox.height - (r * (enemies[r][c].hitbox.height + 15));
-    //         }
-    //     }
-    // }
 
     // Move tanto a bounding box global quanto cada inimigo vivo
     public void move(float deltaX, float deltaY) {

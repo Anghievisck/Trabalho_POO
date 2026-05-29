@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.w3c.dom.Text;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
@@ -79,7 +78,8 @@ public class GameScreen extends ScreenAdapter {
         }
 
         List<TextureRegion> enemySprites = new ArrayList<>();
-        enemySprites.add(atlas.findRegion("enemy_placeholder"));
+        enemySprites.add(atlas.findRegion("alien_crab1"));
+        enemySprites.add(atlas.findRegion("alien_crab2"));
 
         List<TextureRegion> enemyBulletSprites = new ArrayList<>();
         enemyBulletSprites.add(atlas.findRegion("bullet_placeholder"));
@@ -89,7 +89,7 @@ public class GameScreen extends ScreenAdapter {
 
         for(int i = 0; i < 3; i++){
             // Lembre-se de passar a lista de sprites e velocidades corretas no lugar dos nulls
-            swarms.add(new Swarm(50, 400, 30, 30, 15, i + (float)1.5*difficulty, enemySprites, 100, enemyBulletSprites, enemyBulletSpeeds, i));
+            swarms.add(new Swarm((float)50, (float)400, (float)30, (float)30, (float)15, i + (float)1.5*difficulty, enemySprites, 100, enemyBulletSprites, enemyBulletSpeeds));
             swarmControllers.add(new SwarmController(swarms.get(i), Gdx.graphics.getWidth(), difficulty));
         }
         
