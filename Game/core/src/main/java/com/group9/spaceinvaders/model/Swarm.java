@@ -1,6 +1,7 @@
 package com.group9.spaceinvaders.model;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+
 import java.util.List;
 
 public class Swarm {
