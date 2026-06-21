@@ -4,7 +4,7 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-
+import com.badlogic.gdx.audio.Sound;
 
 /** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
 public class SpaceInvadersGame extends Game {
@@ -20,10 +20,9 @@ public class SpaceInvadersGame extends Game {
         // Loads the player and the barricade
         assets.load("sprites/gameplay.atlas", TextureAtlas.class);
 
-        /*
-        // Loading an explosion sound
+        // Carregando os efeitos sonoros
+        assets.load("audio/sfx/shoot.wav", Sound.class);
         assets.load("audio/sfx/explosion.wav", Sound.class);
-        */
 
         assets.finishLoading();
 

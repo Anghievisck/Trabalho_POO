@@ -1,21 +1,23 @@
 package com.group9.spaceinvaders.controller;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.group9.spaceinvaders.model.Player;
 import com.group9.spaceinvaders.model.Bullet;
 import com.group9.spaceinvaders.model.Enemy;
+import com.group9.spaceinvaders.view.SpaceInvadersGame;
 
 import java.util.List;
 
 public class PlayerController {
     private Player player;
+    private SpaceInvadersGame game;
 
-    public PlayerController(Player player) {
+    public PlayerController(SpaceInvadersGame game, Player player) {
+        this.game = game;
         this.player = player;
     }
 
-    // O parâmetro 'delta' é o tempo (em frações de segundo) desde o último frame.
-    // Isso garante que a nave mova na mesma velocidade num PC da NASA ou no seu i5.
     public void update(float delta, List<Bullet> bullets) {
         if(Gdx.input.isKeyPressed(player.leftKey)) {
             player.moveLeft(delta);
@@ -25,7 +27,7 @@ public class PlayerController {
             player.moveRight(delta);
         }
 
-        if(Gdx.input.isKeyPressed(player.shootKey) && player.ammo > 0) {
+        if(Gdx.input.isKeyJustPressed(player.shootKey) && player.ammo > 0) {
             Bullet novaBala = new Bullet(
                 player.getX() + (player.getWidth() / 2), 
                 player.getY() + player.getHeight(), 
@@ -34,6 +36,11 @@ public class PlayerController {
 
             bullets.add(novaBala);
             player.ammo--;
+
+            // Reproduz o som de tiro carregado no AssetManager
+            if (game.assets.isLoaded("audio/sfx/shoot.wav", Sound.class)) {
+                game.assets.get("audio/sfx/shoot.wav", Sound.class).play(0.4f);
+            }
         }
 
         for(Bullet bullet : bullets){
