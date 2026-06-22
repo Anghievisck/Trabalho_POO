@@ -27,7 +27,7 @@ public class PlayerController {
             player.moveRight(delta);
         }
 
-        if(Gdx.input.isKeyJustPressed(player.shootKey) && player.ammo > 0) {
+        if(Gdx.input.isKeyJustPressed(player.shootKey) && player.ammo > 0 && player.lives > 0) {
             Bullet novaBala = new Bullet(
                 player.getX() + (player.getWidth() / 2), 
                 player.getY() + player.getHeight(), 
@@ -39,7 +39,7 @@ public class PlayerController {
 
             // Reproduz o som de tiro carregado no AssetManager
             if (game.assets.isLoaded("audio/sfx/shoot.wav", Sound.class)) {
-                game.assets.get("audio/sfx/shoot.wav", Sound.class).play(0.4f);
+                game.assets.get("audio/sfx/shoot.wav", Sound.class).play(0.1f);
             }
         }
 
@@ -48,6 +48,11 @@ public class PlayerController {
                 if(player.checkCollision(bullet)){
                     bullet.isValid = false;
                     player.lives--;
+
+                    // Reproduz o som de tiro carregado no AssetManager
+                    if (game.assets.isLoaded("audio/sfx/explosion.wav", Sound.class)) {
+                        game.assets.get("audio/sfx/explosion.wav", Sound.class).play(0.4f);
+                    }
                 }
             }
         }

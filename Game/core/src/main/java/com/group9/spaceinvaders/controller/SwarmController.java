@@ -6,9 +6,12 @@ import com.group9.spaceinvaders.model.Player;
 import com.group9.spaceinvaders.model.Bullet;
 import com.group9.spaceinvaders.model.Swarm;
 import com.group9.spaceinvaders.model.AmmoDrop;
+import com.group9.spaceinvaders.view.SpaceInvadersGame;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.audio.Sound;
 import java.util.ArrayList;
 import java.util.List;
+
 
 public class SwarmController {
     private Swarm swarm;
@@ -16,13 +19,16 @@ public class SwarmController {
     private int spriteCycle = 0;
     private float timeSinceLastSpriteUpdate = 0f;
 
+    private SpaceInvadersGame game;
+
     // Novos controladores de tiro dos inimigos
     private float shootTimer = 0f;
     private float shootInterval; 
 
-    public SwarmController(Swarm swarm, float screenWidth, int difficulty) {
+    public SwarmController(Swarm swarm, float screenWidth, int difficulty, SpaceInvadersGame game) {
         this.swarm = swarm;
         this.screenWidth = screenWidth;
+        this.game = game;
         
         // A dificuldade dita a velocidade dos tiros do enxame
         this.shootInterval = Math.max(0.5f, 2.0f - (difficulty * 0.2f)); 
@@ -84,8 +90,13 @@ public class SwarmController {
                                 bullet.isValid = false;
 
                                 if (enemy.health <= 0) {
-                                    swarm.aliveCount--; 
                                     // A munição não "dropa" mais daqui
+                                    swarm.aliveCount--; 
+
+                                    // Reproduz o som de tiro carregado no AssetManager
+                                    if (game.assets.isLoaded("audio/sfx/explosion.wav", Sound.class)) {
+                                        game.assets.get("audio/sfx/explosion.wav", Sound.class).play(0.4f);
+                                    }
                                 }
 
                                 player.points += 10;
@@ -104,6 +115,10 @@ public class SwarmController {
                             1, 
                             enemy
                         ));
+
+                        if (game.assets.isLoaded("audio/sfx/shoot.wav", Sound.class)) {
+                            game.assets.get("audio/sfx/shoot.wav", Sound.class).play(0.1f);
+                        }
                     }
                 }
             }

@@ -115,7 +115,7 @@ public class GameScreen extends ScreenAdapter {
 
         for(int i = 0; i < 3; i++){
             swarms.add(new Swarm((float)50, (float)400, (float)30, (float)30, (float)15, (i + 1) * 1.5f * difficulty, enemySprites, 100, enemyBulletSprites, enemyBulletSpeeds));
-            swarmControllers.add(new SwarmController(swarms.get(i), 800f, difficulty)); 
+            swarmControllers.add(new SwarmController(swarms.get(i), 800f, difficulty, game)); 
         }
 
         // SE CARREGADO DE UM SAVE: Restaura as posições e vidas customizadas dos inimigos em tela
