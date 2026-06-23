@@ -1,66 +1,150 @@
 package com.group9.spaceinvaders.controller;
 
+import com.badlogic.gdx.math.Rectangle;
 import com.group9.spaceinvaders.model.Enemy;
-import com.group9.spaceinvaders.model.PlayerBullet;
+import com.group9.spaceinvaders.model.Player;
+import com.group9.spaceinvaders.model.Bullet;
 import com.group9.spaceinvaders.model.Swarm;
+import com.group9.spaceinvaders.model.AmmoDrop;
+import com.group9.spaceinvaders.view.SpaceInvadersGame;
+import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.audio.Sound;
+import java.util.ArrayList;
 import java.util.List;
-
 
 
 public class SwarmController {
     private Swarm swarm;
     private float screenWidth;
+    private int spriteCycle = 0;
+    private float timeSinceLastSpriteUpdate = 0f;
 
-    public SwarmController(Swarm swarm, float screenWidth) {
+    private SpaceInvadersGame game;
+
+    // Novos controladores de tiro dos inimigos
+    private float shootTimer = 0f;
+    private float shootInterval; 
+
+    public SwarmController(Swarm swarm, float screenWidth, int difficulty, SpaceInvadersGame game) {
         this.swarm = swarm;
         this.screenWidth = screenWidth;
+        this.game = game;
+        
+        // A dificuldade dita a velocidade dos tiros do enxame
+        this.shootInterval = Math.max(0.5f, 2.0f - (difficulty * 0.2f)); 
     }
 
-    public void update(float delta, List<PlayerBullet> playerBullets) {
+    public void update(float delta, List<Bullet> activeBullets, List<AmmoDrop> activeDrops) {
         float moveX = swarm.speed * delta;
         if (!swarm.movingRight) {
             moveX = -moveX; 
         }
 
         boolean hitEdge = false;
+        timeSinceLastSpriteUpdate += delta;
+        
+        // Atualiza o relógio de tiro dos inimigos
+        shootTimer += delta; 
 
-        // 1. Varre o grid para ver se algum alien VIVO bate na parede
+        List<Bullet> enemyBulletsToSpawn = new ArrayList<>();
+
+        // Lógica para decidir se um inimigo atira neste exato frame
+        boolean willShootThisFrame = false;
+        int targetEnemyToShoot = 0;
+        
+        if (shootTimer >= shootInterval && swarm.aliveCount > 0) {
+            willShootThisFrame = true;
+            shootTimer = 0f;
+            // Sorteia um dos inimigos vivos para efetuar o disparo
+            targetEnemyToShoot = MathUtils.random(1, swarm.aliveCount);
+        }
+
+        int aliveCounter = 0; // Contador auxiliar para achar o atirador sorteado
+
+        int enemyType;
         for (int r = 0; r < swarm.rows; r++) {
             for (int c = 0; c < swarm.cols; c++) {
                 Enemy enemy = swarm.enemies[r][c];
-                if (enemy.isAlive) {
-                    // Se indo para a direita, checa a borda direita do inimigo
-                    if (swarm.movingRight && (enemy.bounds.x + enemy.bounds.width + moveX > screenWidth)) {
-                        hitEdge = true;
-                        break; // Já achou um que bateu, pode parar de procurar
-                    } 
-                    // Se indo para a esquerda, checa a borda esquerda do inimigo
-                    else if (!swarm.movingRight && (enemy.bounds.x + moveX < 0)) {
-                        hitEdge = true;
-                        break; 
+
+                if (enemy.health > 0) {
+                    aliveCounter++; // Conta apenas os vivos
+
+                    if(r == 0){
+                        enemyType = 4;
+                    } else if(r < 3){
+                        enemyType = 2;
+                    } else {
+                        enemyType = 0;
                     }
-                    for (PlayerBullet bullet : playerBullets) {
-                        if (enemy.checkCollision(bullet)) {
-                            enemy.isAlive = false;
-                            bullet.isValid = false;
-                            bullet.player.points += 10; // Adiciona pontos ao jogador
-                            swarm.aliveCount--; // Decrementa o contador de inimigos vivos
+
+                    if (timeSinceLastSpriteUpdate >= 30 * delta) { 
+                        enemy.updateSprite(swarm.enemySprites.get(enemyType + spriteCycle));
+                    }
+
+                    Rectangle hitbox = enemy.getHitbox();
+
+                    // Verifica se o enxame bateu na parede
+                    if (swarm.movingRight && (hitbox.x + hitbox.width + moveX > screenWidth)) {
+                        hitEdge = true;
+                    } else if (!swarm.movingRight && (hitbox.x + moveX < 0)) {
+                        hitEdge = true;
+                    }
+
+                    // Checa se tomou tiro do Player
+                    for (Bullet bullet : activeBullets) {
+                        if (bullet.origin instanceof Player) {
+                            Player player = (Player) bullet.origin;
+                            if (enemy.checkCollision(bullet)) {
+                                enemy.health -= bullet.damage;
+                                bullet.isValid = false;
+
+                                if (enemy.health <= 0) {
+                                    // A munição não "dropa" mais daqui
+                                    swarm.aliveCount--; 
+
+                                    // Reproduz o som de tiro carregado no AssetManager
+                                    if (game.assets.isLoaded("audio/sfx/explosion.wav", Sound.class)) {
+                                        game.assets.get("audio/sfx/explosion.wav", Sound.class).play(0.4f);
+                                    }
+                                }
+
+                                player.points += 10 + enemyType*10;
+                            }
+                        }
+                    }
+
+                    // Se este for o inimigo sorteado, ele cria uma bala
+                    if (willShootThisFrame && aliveCounter == targetEnemyToShoot) {
+                        enemyBulletsToSpawn.add(new Bullet(
+                            enemy.getX() + (enemy.getWidth() / 2), 
+                            enemy.getY(), 
+                            5, 10, 
+                            enemy.bulletSprite, 
+                            enemy.bulletSpeed, 
+                            1, 
+                            enemy
+                        ));
+
+                        if (game.assets.isLoaded("audio/sfx/shoot.wav", Sound.class)) {
+                            game.assets.get("audio/sfx/shoot.wav", Sound.class).play(0.1f);
                         }
                     }
                 }
             }
-            if (hitEdge) break; // Sai do loop externo também
         }
 
-        // 2. Aplica o movimento baseado no resultado
+        activeBullets.addAll(enemyBulletsToSpawn);
+
         if (hitEdge) {
-            // Inverte a direção e desce a nuvem inteira
             swarm.movingRight = !swarm.movingRight;
             swarm.move(0, -swarm.dropDistance);
         } else {
-            // Caminho livre, continua andando de lado
-            swarm.move(moveX, 0);
+            swarm.move(moveX * delta * 30, 0);
+        }
+
+        if (timeSinceLastSpriteUpdate >= 30 * delta) {
+            spriteCycle = (spriteCycle + 1) % 2;
+            timeSinceLastSpriteUpdate = 0f;
         }
     }
-
 }

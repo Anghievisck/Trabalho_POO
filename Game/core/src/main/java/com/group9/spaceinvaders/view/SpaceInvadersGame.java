@@ -3,7 +3,7 @@ package com.group9.spaceinvaders.view;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.audio.Sound;
 
 /** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
@@ -17,13 +17,12 @@ public class SpaceInvadersGame extends Game {
         // Loading a UI skin
         assets.load("ui/spaceinvaders.json", Skin.class);
 
-        /*
         // Loads the player and the barricade
-        assets.load("sprites/barricada.png", Texture.class);
+        assets.load("sprites/gameplay.atlas", TextureAtlas.class);
 
-        // Loading an explosion sound
+        // Carregando os efeitos sonoros
+        assets.load("audio/sfx/shoot.wav", Sound.class);
         assets.load("audio/sfx/explosion.wav", Sound.class);
-        */
 
         assets.finishLoading();
 

@@ -1,19 +1,35 @@
 package com.group9.spaceinvaders.model;
 
-import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+
+public class Enemy extends Entity{
+    public int health;
+
+    public TextureRegion bulletSprite;
+    public float bulletSpeed;
 
 
-public class Enemy {
-    public Rectangle bounds;
-    public boolean isAlive = true;
+    public Enemy(float startX, float startY, float width, float height, TextureRegion sprite, int maxHealth, TextureRegion bulletSprite, float bulletSpeed) {
+        super(startX, startY, width, height, sprite);
 
-    public Enemy(float startX, float startY, float width, float height) {
-        this.bounds = new Rectangle(startX, startY, width, height);
+        this.health = maxHealth;
+        this.bulletSprite = bulletSprite;
+        this.bulletSpeed = bulletSpeed;
     }
-    public boolean checkCollision(PlayerBullet bullet){
-        if(this.isAlive && bullet.isValid){
-            return this.bounds.overlaps(bullet.bounds);
+
+    public boolean checkCollision(Bullet bullet){
+        if(this.health > 0 && bullet.isValid){
+            return this.getHitbox().overlaps(bullet.getHitbox());
         }
+
         return false;
     }
+    public void update(float delta){}
+
+    public void updateSprite(TextureRegion NewSprite){
+        if(this.health > 0){
+            this.sprite = NewSprite;
+        }
+    }
+    
 }

@@ -1,0 +1,68 @@
+\documentclass[12pt, a4paper]{article}
+
+% Packages
+\usepackage[utf8]{inputenc}
+\usepackage{geometry}
+\geometry{a4paper, margin=1in}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{float}
+\usepackage{listings}
+
+% Title and Group Identification
+\title{\vspace{-2cm}\textbf{Project Report}\vspace{-0.5cm}}
+\author{
+    \textbf{Group Identification: Group 9} \\[0.3cm]
+    Gabriel Inumaru Esteves - USP Number: 15453487 \\
+    Matheus Spineli de Paiva - USP Number: 14598682 \\
+    Pedro Luís Anghievisck - USP Number: 15656521
+}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\section{Requirements}
+The application is a 2D Space Invaders clone that fulfills all assigned requirements: utilizing LibGDX for screen management and graphics, core mechanics (movement, shooting, and collision detection), a local two-player cooperative mode with shared screen and individual lives, a 3-level progression system with increasing difficulty, real-time scoring, and a persistent Save/Load system to persist game progress. 
+
+\textbf{Extra Feature:} We introduced a \textbf{unique ammunition management system}. Instead of infinite shooting, players must strategically catch random ammo drops to reload their weapons, adding a new layer of resource management to the core gameplay.
+
+\section{Project Description}
+
+\subsection{Brief Description}
+Developed in Java using the LibGDX framework, players control spaceships at the bottom of the screen to defend against alien formations that move downwards and shoot periodically. The application manages multiple states seamlessly (Main Menu, Gameplay, Pause Menu, Level Complete, and Game Over). It tracks real-time scores and lives, ending the game only when all player lives are lost or aliens breach the defense line. 
+
+\subsection{OOP Concepts Applied}
+\begin{itemize}
+    \item \textbf{Composition:} The \texttt{Swarm} class is composed of a 2D array of \texttt{Enemy} objects. It acts as a manager for the entire grid, moving them as a single unit while still allowing individual enemies to maintain their own health and sprite states.
+    \item \textbf{Polymorphism:} Demonstrated in the \texttt{AmmoDrop} class, which overrides the \texttt{draw()} method from the abstract \texttt{Entity} class to render its sprite rotated by 90 degrees. Furthermore, collision checks dynamically evaluate the \texttt{origin} of a \texttt{Bullet} using \texttt{instanceof} to distinguish friendly fire from enemy attacks.
+\end{itemize}
+
+\section{Comments About the Code}
+\begin{itemize}
+    \item \textbf{Hitbox Synchronization:} To prevent collision bugs, the \texttt{Entity} class encapsulates positional data. By using \texttt{protected} methods, the bounding box (\texttt{Rectangle}) is automatically synced whenever \texttt{setX()} or \texttt{setY()} are called by the subclasses.
+    \item \textbf{Safe Object Removal:} We use boolean flags like \texttt{isValid} in \texttt{Bullet} and \texttt{isCollected} in \texttt{AmmoDrop}. Instead of removing objects from memory the moment they collide, we flag them and allow an \texttt{Iterator} in the main loop to safely sweep them later.
+\end{itemize}
+
+\section{Testing (Plan \& Results)}
+The test plan utilizes the JUnit framework (\texttt{GameLogicTest}) to validate core mathematical and physical interactions without requiring the LibGDX graphical context. Tests focus on hitbox synchronization, accurate collision detection between player hitboxes and enemy bullets, and proper instantiation of enemies within a generated \texttt{Swarm}. All automated tests passed successfully, confirming that the collision logic robustly ignores inactive entities (e.g., dead enemies and destroyed bullets do not trigger false positive collisions).
+
+\section{Build Procedures}
+\begin{enumerate}
+    \item Ensure you have the lastest Java Development Kit (JDK 26+), and make installed.
+    \item Clone the repository containing the source code and assets.
+    \item Open a terminal or command prompt in the root directory of the project.
+    \item Run the application using the Makefile wrapper: make run
+\end{enumerate}
+
+\section{Problems}
+\begin{itemize}
+    \item \textbf{State Persistence:} Saving the game state was a major challenge. We had to ensure that the exact X and Y coordinates, health, and alive status of every individual enemy in the 2D array were saved and accurately restored using LibGDX's \texttt{Preferences}.
+    \item \textbf{Concurrent Iteration:} Early in development, the game crashed when bullets were removed upon hitting an enemy (\texttt{ConcurrentModificationException}). This was solved by migrating from standard \texttt{for} loops to \texttt{Iterator} implementations.
+\end{itemize}
+
+\section{Comments}
+The inclusion of a local two-player mode added complexity to the collision and Game Over states, but alongside the custom ammo system, it significantly improved the final gameplay experience. 
+
+\end{document}

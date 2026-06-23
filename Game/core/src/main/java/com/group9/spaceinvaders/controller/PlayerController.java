@@ -1,32 +1,58 @@
 package com.group9.spaceinvaders.controller;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.group9.spaceinvaders.model.Player;
-import com.group9.spaceinvaders.model.EnemyBullet;
+import com.group9.spaceinvaders.model.Bullet;
+import com.group9.spaceinvaders.model.Enemy;
+import com.group9.spaceinvaders.view.SpaceInvadersGame;
+
 import java.util.List;
 
 public class PlayerController {
     private Player player;
+    private SpaceInvadersGame game;
 
-    public PlayerController(Player player) {
+    public PlayerController(SpaceInvadersGame game, Player player) {
+        this.game = game;
         this.player = player;
     }
 
-    // O parâmetro 'delta' é o tempo (em frações de segundo) desde o último frame.
-    // Isso garante que a nave mova na mesma velocidade num PC da NASA ou no seu i5.
-    public void update(float delta, List<EnemyBullet> bullets) {
-        if (Gdx.input.isKeyPressed(player.leftKey)) {
+    public void update(float delta, List<Bullet> bullets) {
+        if(Gdx.input.isKeyPressed(player.leftKey)) {
             player.moveLeft(delta);
         }
-        if (Gdx.input.isKeyPressed(player.rightKey)) {
+
+        if(Gdx.input.isKeyPressed(player.rightKey)) {
             player.moveRight(delta);
         }
-        for(EnemyBullet bullet : bullets){
-            if(player.checkCollision(bullet)){
-                bullet.isValid = false;
-                player.lives--;
-                if(player.lives <= 0){
-                    player.isAlive = false;
+
+        if(Gdx.input.isKeyJustPressed(player.shootKey) && player.ammo > 0 && player.lives > 0) {
+            Bullet novaBala = new Bullet(
+                player.getX() + (player.getWidth() / 2), 
+                player.getY() + player.getHeight(), 
+                5, 15, player.bulletSprite, 400f, 100, player
+            );
+
+            bullets.add(novaBala);
+            player.ammo--;
+
+            // Reproduz o som de tiro carregado no AssetManager
+            if (game.assets.isLoaded("audio/sfx/shoot.wav", Sound.class)) {
+                game.assets.get("audio/sfx/shoot.wav", Sound.class).play(0.1f);
+            }
+        }
+
+        for(Bullet bullet : bullets){
+            if(bullet.origin instanceof Enemy){
+                if(player.checkCollision(bullet)){
+                    bullet.isValid = false;
+                    player.lives--;
+
+                    // Reproduz o som de tiro carregado no AssetManager
+                    if (game.assets.isLoaded("audio/sfx/explosion.wav", Sound.class)) {
+                        game.assets.get("audio/sfx/explosion.wav", Sound.class).play(0.4f);
+                    }
                 }
             }
         }

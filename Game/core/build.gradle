@@ -7,6 +7,9 @@ dependencies {
   if(enableGraalNative == 'true') {
     implementation "io.github.berstanio:gdx-svmhelper-annotations:$graalHelperVersion"
   }
+
+  // O JUnit entra aqui, junto com os outros!
+  implementation 'junit:junit:4.13.2'
 }
 
 jar {
