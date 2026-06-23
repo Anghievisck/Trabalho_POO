@@ -30,7 +30,7 @@ public class Player extends Entity {
 
     public void update(float delta){
         float deltaX = speed * delta;
-        if(this.getX() + deltaX >= 0 && this.getX() + deltaX + this.getWidth() <= Gdx.graphics.getWidth()){
+        if(this.getX() + deltaX >= 0 && this.getX() + deltaX + this.getWidth() <= 800){
             this.setX(deltaX);
         }
     }

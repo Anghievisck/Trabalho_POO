@@ -1,6 +1,6 @@
 
 gameplay.png
-size: 256, 64
+size: 512, 64
 format: RGBA8888
 filter: Nearest, Nearest
 repeat: none
@@ -18,24 +18,93 @@ alien_crab2
   orig: 50, 50
   offset: 0, 0
   index: -1
-alien_placeholder
-  rotate: false
-  xy: 158, 12
-  size: 40, 40
-  orig: 40, 40
-  offset: 0, 0
-  index: -1
-bullet_placeholder
-  rotate: false
-  xy: 200, 37
-  size: 5, 15
-  orig: 5, 15
-  offset: 0, 0
-  index: -1
-player_placeholder
+alien_octopus1
   rotate: false
   xy: 106, 2
   size: 50, 50
   orig: 50, 50
+  offset: 0, 0
+  index: -1
+alien_octopus2
+  rotate: false
+  xy: 158, 2
+  size: 50, 50
+  orig: 50, 50
+  offset: 0, 0
+  index: -1
+alien_placeholder
+  rotate: false
+  xy: 366, 12
+  size: 40, 40
+  orig: 40, 40
+  offset: 0, 0
+  index: -1
+alien_squid1
+  rotate: false
+  xy: 210, 2
+  size: 50, 50
+  orig: 50, 50
+  offset: 0, 0
+  index: -1
+alien_squid2
+  rotate: false
+  xy: 262, 2
+  size: 50, 50
+  orig: 50, 50
+  offset: 0, 0
+  index: -1
+bullet_placeholder
+  rotate: false
+  xy: 408, 11
+  size: 5, 15
+  orig: 5, 15
+  offset: 0, 0
+  index: -1
+player1
+  rotate: false
+  xy: 408, 28
+  size: 50, 24
+  orig: 50, 24
+  offset: 0, 0
+  index: -1
+player2
+  rotate: false
+  xy: 460, 28
+  size: 50, 24
+  orig: 50, 24
+  offset: 0, 0
+  index: -1
+player_placeholder
+  rotate: false
+  xy: 314, 2
+  size: 50, 50
+  orig: 50, 50
+  offset: 0, 0
+  index: -1
+
+gameplay2.png
+size: 1024, 1024
+format: RGBA8888
+filter: Nearest, Nearest
+repeat: none
+Referencias/GameIcon
+  rotate: false
+  xy: 2, 84
+  size: 512, 512
+  orig: 512, 512
+  offset: 0, 0
+  index: -1
+Referencias/SpaceInvaders
+  rotate: false
+  xy: 2, 2
+  size: 112, 80
+  orig: 112, 80
+  offset: 0, 0
+  index: -1
+Referencias/SpaceInvaders_Health
+  rotate: false
+  xy: 516, 500
+  size: 32, 96
+  orig: 32, 96
   offset: 0, 0
   index: -1

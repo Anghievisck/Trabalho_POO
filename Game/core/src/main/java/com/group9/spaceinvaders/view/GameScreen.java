@@ -26,12 +26,17 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 import com.group9.spaceinvaders.model.Player;
-import com.group9.spaceinvaders.controller.PlayerController;
 import com.group9.spaceinvaders.model.Bullet;
 import com.group9.spaceinvaders.model.Swarm;
-import com.group9.spaceinvaders.controller.SwarmController;
 import com.group9.spaceinvaders.model.Enemy;
 import com.group9.spaceinvaders.model.AmmoDrop;
+import com.group9.spaceinvaders.model.BarricadeManager;
+import com.group9.spaceinvaders.model.Barricade;
+import com.group9.spaceinvaders.model.BarricadeBlock;
+
+import com.group9.spaceinvaders.controller.PlayerController;
+import com.group9.spaceinvaders.controller.BarricadeTextureGenerator;
+import com.group9.spaceinvaders.controller.SwarmController;
 
 public class GameScreen extends ScreenAdapter {
     private SpaceInvadersGame game;
@@ -48,6 +53,8 @@ public class GameScreen extends ScreenAdapter {
     
     private List<Bullet> activeBullets = new ArrayList<>();
     private List<AmmoDrop> activeDrops = new ArrayList<>();
+
+    private BarricadeManager barricadeManager;
 
     private SpriteBatch batch;
     private OrthographicCamera camera;
@@ -86,35 +93,51 @@ public class GameScreen extends ScreenAdapter {
         viewport = new FitViewport(800, 600, camera);
 
         TextureAtlas atlas = game.assets.get("sprites/gameplay.atlas", TextureAtlas.class);
-        TextureRegion playerSprite = atlas.findRegion("player_placeholder");
         TextureRegion bulletSprite = atlas.findRegion("bullet_placeholder");
 
-        playerOne = new Player(200, 50, 50, 50, playerSprite, bulletSprite, Input.Keys.LEFT, Input.Keys.RIGHT, Input.Keys.SPACE);
+        playerOne = new Player(200, 50, 50, 24, atlas.findRegion("player1"), bulletSprite, Input.Keys.LEFT, Input.Keys.RIGHT, Input.Keys.SPACE);
         playerOne.points = p1Points;
         playerOne.lives = p1Lives;
         playerOne.ammo = p1Ammo;
         playerOneController = new PlayerController(game, playerOne);
 
         if(this.twoPlayers){
-            playerTwo = new Player(500, 50, 50, 50, playerSprite, bulletSprite, Input.Keys.A, Input.Keys.D, Input.Keys.W);
+            playerTwo = new Player(500, 50, 50, 24, atlas.findRegion("player2"), bulletSprite, Input.Keys.A, Input.Keys.D, Input.Keys.W);
             playerTwo.points = p2Points;
             playerTwo.lives = p2Lives;
             playerTwo.ammo = p2Ammo;
             playerTwoController = new PlayerController(game, playerTwo);
         }
 
+        TextureRegion intact = BarricadeTextureGenerator.createIntact(15);
+        TextureRegion damaged = BarricadeTextureGenerator.createDamaged(15);
+        TextureRegion destroyed = BarricadeTextureGenerator.createDestroyed(15);
+
+        barricadeManager = new BarricadeManager(8, intact, damaged, destroyed);
+        // Place barricades at y = 300 (between enemies and player)
+        barricadeManager.createBarricades(4, 800, 150);
+
         List<TextureRegion> enemySprites = new ArrayList<>();
+        // 0
         enemySprites.add(atlas.findRegion("alien_crab1"));
         enemySprites.add(atlas.findRegion("alien_crab2"));
+        // 2
+        enemySprites.add(atlas.findRegion("alien_octopus1"));
+        enemySprites.add(atlas.findRegion("alien_octopus2"));
+        // 4
+        enemySprites.add(atlas.findRegion("alien_squid1"));
+        enemySprites.add(atlas.findRegion("alien_squid2"));
 
         List<TextureRegion> enemyBulletSprites = new ArrayList<>();
         enemyBulletSprites.add(atlas.findRegion("bullet_placeholder"));
 
         List<Float> enemyBulletSpeeds = new ArrayList<>();
         enemyBulletSpeeds.add(-250f);
+        enemyBulletSpeeds.add(-300f);
+        enemyBulletSpeeds.add(-350f);
 
         for(int i = 0; i < 3; i++){
-            swarms.add(new Swarm((float)50, (float)400, (float)30, (float)30, (float)15, (i + 1) * 1.5f * difficulty, enemySprites, 100, enemyBulletSprites, enemyBulletSpeeds));
+            swarms.add(new Swarm((float)50, (float)300, (float)30, (float)30, (float)15, (i + 1) * 1.5f * difficulty, enemySprites, 100, enemyBulletSprites, enemyBulletSpeeds));
             swarmControllers.add(new SwarmController(swarms.get(i), 800f, difficulty, game)); 
         }
 
@@ -135,6 +158,27 @@ public class GameScreen extends ScreenAdapter {
                     enemy.setX(savedX - enemy.getX());
                     enemy.setY(savedY - enemy.getY());
                     enemy.health = prefs.getInteger("enemy_" + r + "_" + c + "_health", enemy.health);
+                }
+            }
+
+            // Restore barricades
+            List<Barricade> barricades = barricadeManager.getBarricades();
+            for (int b = 0; b < barricades.size(); b++) {
+                Barricade barricade = barricades.get(b);
+                List<List<BarricadeBlock>> grid = barricade.getGrid();
+                for (int row = 0; row < grid.size(); row++) {
+                    for (int col = 0; col < grid.get(row).size(); col++) {
+                        BarricadeBlock block = grid.get(row).get(col);
+                        int stateOrdinal = prefs.getInteger("barricade_" + b + "_" + row + "_" + col,
+                                BarricadeBlock.State.INTACT.ordinal());
+                        // Restore the state by damaging the block appropriately
+                        // We can't set state directly, so we call damage() until we reach the desired
+                        // state
+                        BarricadeBlock.State targetState = BarricadeBlock.State.values()[stateOrdinal];
+                        while (block.getState() != targetState) {
+                            block.damage();
+                        }
+                    }
                 }
             }
         }
@@ -237,6 +281,19 @@ public class GameScreen extends ScreenAdapter {
                 prefs.putFloat("enemy_" + r + "_" + c + "_x", enemy.getX());
                 prefs.putFloat("enemy_" + r + "_" + c + "_y", enemy.getY());
                 prefs.putInteger("enemy_" + r + "_" + c + "_health", enemy.health);
+            }
+        }
+
+        List<Barricade> barricades = barricadeManager.getBarricades();
+        for (int b = 0; b < barricades.size(); b++) {
+            Barricade barricade = barricades.get(b);
+            List<List<BarricadeBlock>> grid = barricade.getGrid();
+            for (int row = 0; row < grid.size(); row++) {
+                for (int col = 0; col < grid.get(row).size(); col++) {
+                    BarricadeBlock block = grid.get(row).get(col);
+                    // Save state as integer: 0=INTACT, 1=DAMAGED, 2=DESTROYED
+                    prefs.putInteger("barricade_" + b + "_" + row + "_" + col, block.getState().ordinal());
+                }
             }
         }
         
@@ -355,6 +412,8 @@ public class GameScreen extends ScreenAdapter {
             }
         }
 
+        barricadeManager.draw(batch);
+
         // Drops e Balas atualizam a física apenas se o jogo não estiver pausado
         Iterator<AmmoDrop> dropIter = activeDrops.iterator();
         while(dropIter.hasNext()){
@@ -377,14 +436,21 @@ public class GameScreen extends ScreenAdapter {
             }
         }
 
-        Iterator<Bullet> iter = activeBullets.iterator();
-        while(iter.hasNext()){
-            Bullet b = iter.next();
-            if (!isPaused) b.update(delta); 
-            b.draw(batch);   
-            
-            if(!b.isValid){
-                iter.remove();
+        // ---- UPDATE AND DRAW BULLETS (with barricade collision) ----
+        Iterator<Bullet> bulletIter = activeBullets.iterator();
+        while (bulletIter.hasNext()) {
+            Bullet b = bulletIter.next();
+            if (!isPaused)
+                b.update(delta);
+            b.draw(batch);
+
+            // --- BARRICADE COLLISION ---
+            if (b.isValid && barricadeManager.checkBulletCollision(b.getHitbox())) {
+                b.isValid = false; // bullet stops and is removed
+            }
+
+            if (!b.isValid) {
+                bulletIter.remove();
             }
         }
 

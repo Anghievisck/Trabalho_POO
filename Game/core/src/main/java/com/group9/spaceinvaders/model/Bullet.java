@@ -21,9 +21,9 @@ public class Bullet extends Entity{
     public void update(float delta){
         this.setY(speed * delta);
 
-        if(this.getY() <= 0 || this.getY() + this.getHeight() >= Gdx.graphics.getHeight() ){
+        // This + 50 is a magic number that hotfixes a minor bug where the bullet was vanishing
+        if(this.getY() <= 0 || this.getY() + this.getHeight() >= Gdx.graphics.getHeight() + 50){
             this.isValid = false;
         }
-
     }
 }

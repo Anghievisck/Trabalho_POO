@@ -61,6 +61,7 @@ public class SwarmController {
 
         int aliveCounter = 0; // Contador auxiliar para achar o atirador sorteado
 
+        int enemyType;
         for (int r = 0; r < swarm.rows; r++) {
             for (int c = 0; c < swarm.cols; c++) {
                 Enemy enemy = swarm.enemies[r][c];
@@ -68,8 +69,16 @@ public class SwarmController {
                 if (enemy.health > 0) {
                     aliveCounter++; // Conta apenas os vivos
 
+                    if(r == 0){
+                        enemyType = 4;
+                    } else if(r < 3){
+                        enemyType = 2;
+                    } else {
+                        enemyType = 0;
+                    }
+
                     if (timeSinceLastSpriteUpdate >= 30 * delta) { 
-                        enemy.updateSprite(swarm.enemySprites.get(spriteCycle));
+                        enemy.updateSprite(swarm.enemySprites.get(enemyType + spriteCycle));
                     }
 
                     Rectangle hitbox = enemy.getHitbox();
@@ -99,7 +108,7 @@ public class SwarmController {
                                     }
                                 }
 
-                                player.points += 10;
+                                player.points += 10 + enemyType*10;
                             }
                         }
                     }

@@ -20,32 +20,24 @@ public class Swarm {
     // Quanto o swarm desce quando bate na parede
     public float dropDistance = 15f; 
 
-    private enum EnemyType {
-        BASIC,
-        BASIC2,
-        BASIC3
-    };
-
-
     public Swarm(float startX, float startY, float enemyWidth, float enemyHeight, float padding, float speedModifier,  List<TextureRegion> sprites, int maxHealth, List<TextureRegion> bulletSprites, List<Float> bulletSpeed) {
         enemies = new Enemy[rows][cols];
         
         // Calcula a largura e altura total do retângulo gigante do Swarm
-        float totalWidth = (cols * enemyWidth) + ((cols - 1) * padding);
         float totalHeight = (rows * enemyHeight) + ((rows - 1) * padding);
         speed = speedModifier*speed;
         enemySprites = sprites;
 
-        EnemyType enemyType;
+        int enemyType;
 
         // Preenche o grid com os inimigos
         for (int r = 0; r < rows; r++) {
-            if(r < rows){
-                enemyType = EnemyType.BASIC;
-            } else if(r > 0 && r < 3){
-                enemyType = EnemyType.BASIC2;
+            if(r == 0){
+                enemyType = 4;
+            } else if(r < 3){
+                enemyType = 2;
             } else {
-                enemyType = EnemyType.BASIC3;
+                enemyType = 0;
             }
 
             for (int c = 0; c < cols; c++) {
@@ -55,7 +47,7 @@ public class Swarm {
                 // No libGDX, o Y cresce para cima. Aqui estamos colocando a linha 0 no topo.
                 float enemyY = startY + totalHeight - enemyHeight - (r * (enemyHeight + padding));
                 
-                enemies[r][c] = new Enemy(enemyX, enemyY, enemyWidth, enemyHeight, sprites.get(enemyType.ordinal()), maxHealth, bulletSprites.get(enemyType.ordinal()), bulletSpeed.get(enemyType.ordinal()));
+                enemies[r][c] = new Enemy(enemyX, enemyY, enemyWidth, enemyHeight, sprites.get(enemyType), maxHealth, bulletSprites.get(0), bulletSpeed.get(enemyType % 3));
             }
         }
     }

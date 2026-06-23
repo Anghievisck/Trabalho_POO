@@ -50,9 +50,9 @@ public class Barricade {
             TextureRegion damagedSprite,
             TextureRegion destroyedSprite) {
         int[][] pattern = {
-                { 0, 0, 1, 0, 0, 1, 0, 0 },
-                { 0, 1, 1, 1, 1, 1, 1, 0 },
-                { 1, 1, 1, 1, 1, 1, 1, 1 },
+                { 1, 1, 0, 0, 0, 0, 1, 1 },
+                { 1, 1, 0, 0, 0, 0, 1, 1 },
+                { 1, 1, 1, 0, 0, 1, 1, 1 },
                 { 1, 1, 1, 1, 1, 1, 1, 1 },
                 { 0, 1, 1, 1, 1, 1, 1, 0 },
                 { 0, 0, 1, 1, 1, 1, 0, 0 }
