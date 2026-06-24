@@ -12,9 +12,18 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
+/**
+ * The initial screen of the game allowing players to start a new game,
+ * select multiplayer, load saves, or exit.
+ */
 public class MainMenuScreen extends ScreenAdapter {
     private Stage stage;
 
+    /**
+     * Constructs the Main Menu screen.
+     *
+     * @param game the main game instance
+     */
     public MainMenuScreen(SpaceInvadersGame game) {
         stage = new Stage(new ScreenViewport());
         Gdx.input.setInputProcessor(stage);
@@ -24,27 +33,27 @@ public class MainMenuScreen extends ScreenAdapter {
         Table table = new Table();
         table.setFillParent(true); 
 
-        TextButton btnNovoJogo = new TextButton("Novo Jogo", skin);
-        TextButton btnDoisJogadores = new TextButton("Novo Jogo (2-Jogadores)", skin);
-        TextButton btnCarregar = new TextButton("Carregar Jogo Salvo", skin);
-        TextButton btnSair = new TextButton("Sair", skin);
+        TextButton btnNewGame = new TextButton("New Game", skin);
+        TextButton btnTwoPlayers = new TextButton("New Game (2-Players)", skin);
+        TextButton btnLoad = new TextButton("Load Saved Game", skin);
+        TextButton btnExit = new TextButton("Exit", skin);
 
-        btnNovoJogo.addListener(new ChangeListener() {
+        btnNewGame.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                // Último parâmetro indica que NÃO está carregando de um arquivo de save (false)
+                // Last parameter indicates that it is NOT loading from a save file (false)
                 game.setScreen(new GameScreen(game, 1, false, 0, 0, 3, 5, 0, 3, 5, false));
             }
         });
 
-        btnDoisJogadores.addListener(new ChangeListener() {
+        btnTwoPlayers.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 game.setScreen(new GameScreen(game, 1, true, 0, 0, 3, 5, 0, 3, 5, false));
             }
         });
 
-        btnCarregar.addListener(new ChangeListener() {
+        btnLoad.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 Preferences prefs = Gdx.app.getPreferences("SpaceInvadersSaveFile");
@@ -62,16 +71,16 @@ public class MainMenuScreen extends ScreenAdapter {
                     int p2Lives = prefs.getInteger("p2Lives", 3);
                     int p2Ammo = prefs.getInteger("p2Ammo", 5);
 
-                    // Último parâmetro indica que DEVE carregar o layout dos inimigos salvos (true)
+                    // Last parameter indicates that it MUST load the saved enemies layout (true)
                     game.setScreen(new GameScreen(game, difficulty, twoPlayers, savedLevel, 
                             p1Points, p1Lives, p1Ammo, p2Points, p2Lives, p2Ammo, true));
                 } else {
-                    System.out.println("Nenhum arquivo de salvamento encontrado no sistema.");
+                    System.out.println("No save file found in the system.");
                 }
             }
         });
 
-        btnSair.addListener(new ChangeListener() {
+        btnExit.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 Gdx.app.exit(); 
@@ -82,10 +91,10 @@ public class MainMenuScreen extends ScreenAdapter {
         float btnHeight = 50f;
         float padding = 20f;
 
-        table.add(btnNovoJogo).width(btnWidth).height(btnHeight).padBottom(padding).row();
-        table.add(btnDoisJogadores).width(btnWidth).height(btnHeight).padBottom(padding).row();
-        table.add(btnCarregar).width(btnWidth).height(btnHeight).padBottom(padding).row();
-        table.add(btnSair).width(btnWidth).height(btnHeight);
+        table.add(btnNewGame).width(btnWidth).height(btnHeight).padBottom(padding).row();
+        table.add(btnTwoPlayers).width(btnWidth).height(btnHeight).padBottom(padding).row();
+        table.add(btnLoad).width(btnWidth).height(btnHeight).padBottom(padding).row();
+        table.add(btnExit).width(btnWidth).height(btnHeight);
 
         stage.addActor(table);
     }

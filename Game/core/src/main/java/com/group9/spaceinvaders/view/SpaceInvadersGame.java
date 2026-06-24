@@ -6,7 +6,10 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.audio.Sound;
 
-/** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
+/**
+ * Main application class and entry point that inherits from libGDX's Game.
+ * Handles top-level asset loading and screen delegation.
+ */
 public class SpaceInvadersGame extends Game {
     public AssetManager assets;
 
@@ -17,10 +20,10 @@ public class SpaceInvadersGame extends Game {
         // Loading a UI skin
         assets.load("ui/spaceinvaders.json", Skin.class);
 
-        // Loads the player and the barricade
+        // Loads the player and the barricade sprites
         assets.load("sprites/gameplay.atlas", TextureAtlas.class);
 
-        // Carregando os efeitos sonoros
+        // Loading sound effects
         assets.load("audio/sfx/shoot.wav", Sound.class);
         assets.load("audio/sfx/explosion.wav", Sound.class);
 
@@ -30,7 +33,7 @@ public class SpaceInvadersGame extends Game {
     }
 
     @Override
-    public void dispose(){
+    public void dispose() {
         assets.dispose();
     }
 }

@@ -4,9 +4,13 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
+/**
+ * Abstract base class for all game entities (Player, Enemy, Bullet, etc.).
+ * Handles basic properties like position, dimensions, sprite rendering, and hitboxes.
+ */
 public abstract class Entity {
-    // Usamos 'protected' para que as classes filhas (Player, Enemy) 
-    // possam ler e modificar esses valores diretamente.
+    // We use 'protected' so child classes (Player, Enemy) 
+    // can read and modify these values directly if needed.
     private float x;
     private float y;
     private float width;
@@ -15,7 +19,15 @@ public abstract class Entity {
 
     protected TextureRegion sprite;
 
-    // O Construtor base
+    /**
+     * The base constructor for an Entity.
+     *
+     * @param x      the initial X coordinate
+     * @param y      the initial Y coordinate
+     * @param width  the width of the entity
+     * @param height the height of the entity
+     * @param sprite the visual texture of the entity
+     */
     public Entity(float x, float y, float width, float height, TextureRegion sprite) {
         this.x = x;
         this.y = y;
@@ -23,20 +35,23 @@ public abstract class Entity {
         this.height = height;
         this.sprite = sprite;
         
-        // A hitbox é inicializada automaticamente com os valores passados
+        // The hitbox is automatically initialized with the passed dimensions
         this.hitbox = new Rectangle(x, y, width, height);
     }
 
-    // Toda vez que a entidade se mover, as classes filhas devem chamar 
-    // este método para garantir que a hitbox acompanhe o sprite.
+    /**
+     * Every time the entity moves, child classes must call this method 
+     * to ensure the hitbox follows the sprite's position.
+     */
     protected void updateHitbox() {
         hitbox.setPosition(x, y);
     }
 
-    // Métodos abstratos: Força todas as classes filhas a implementarem 
-    // suas próprias lógicas de atualização e desenho.
-    //     public abstract void update(float delta);
-
+    /**
+     * Draws the entity on the screen.
+     *
+     * @param batch the SpriteBatch used for rendering
+     */
     public void draw(SpriteBatch batch) {
         if (sprite != null) {
             batch.draw(sprite, x, y, width, height);
@@ -59,5 +74,11 @@ public abstract class Entity {
         updateHitbox();
     }
 
+    /**
+     * Abstract method: Forces all child classes to implement 
+     * their own specific update logic.
+     *
+     * @param delta the time elapsed since the last frame
+     */
     public abstract void update(float delta);
 }

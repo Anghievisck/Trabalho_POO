@@ -58,7 +58,7 @@ public class BarricadeManager {
     }
 
     /**
-     * Draws all non‑destroyed blocks of every barricade.
+     * Draws all non-destroyed blocks of every barricade.
      *
      * @param batch the SpriteBatch to draw with
      */
@@ -69,12 +69,10 @@ public class BarricadeManager {
     }
 
     /**
-     * Checks for collision between a bullet and any barricade managed by this
-     * manager.
+     * Checks for collision between a bullet and any barricade managed by this manager.
      *
      * @param bulletHitbox the hitbox (bounding rectangle) of the bullet
-     * @return {@code true} if a collision occurred with any barricade,
-     *         {@code false} otherwise
+     * @return {@code true} if a collision occurred with any barricade, {@code false} otherwise
      */
     public boolean checkBulletCollision(Rectangle bulletHitbox) {
         for (Barricade barricade : barricades) {
@@ -105,8 +103,7 @@ public class BarricadeManager {
     }
 
     /**
-     * Moves all barricades by the given offset (useful for scrolling or dynamic
-     * positioning).
+     * Moves all barricades by the given offset (useful for scrolling or dynamic positioning).
      *
      * @param deltaX horizontal shift
      * @param deltaY vertical shift

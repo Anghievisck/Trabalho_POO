@@ -12,16 +12,14 @@ import java.util.List;
  */
 public class Barricade {
     private List<List<BarricadeBlock>> grid; // 2D grid of blocks
-    private float x, y; // top‑left position of the barricade
+    private float x, y; // top-left position of the barricade
     private float blockSize; // size of each block
 
     /**
      * Constructs a new barricade at the given position.
      *
-     * @param x               the X coordinate of the top‑left corner of the
-     *                        barricade
-     * @param y               the Y coordinate of the top‑left corner of the
-     *                        barricade
+     * @param x               the X coordinate of the top-left corner
+     * @param y               the Y coordinate of the top-left corner
      * @param blockSize       the side length of each block (square)
      * @param intactSprite    texture for intact blocks
      * @param damagedSprite   texture for damaged blocks
@@ -39,7 +37,7 @@ public class Barricade {
     }
 
     /**
-     * Initialises the grid with the classic Space Invaders pattern.
+     * Initializes the grid with the classic Space Invaders pattern.
      * 0 = empty (no block), 1 = solid block.
      *
      * @param intactSprite    texture for intact blocks
@@ -79,7 +77,7 @@ public class Barricade {
     }
 
     /**
-     * Draws all non‑destroyed blocks of this barricade.
+     * Draws all non-destroyed blocks of this barricade.
      *
      * @param batch the SpriteBatch to draw with
      */
@@ -92,14 +90,11 @@ public class Barricade {
     }
 
     /**
-     * Checks for collision between a bullet and any non‑destroyed block of this
-     * barricade.
-     * If a collision occurs, the block is damaged and the method returns
-     * {@code true}.
+     * Checks for collision between a bullet and any non-destroyed block of this barricade.
+     * If a collision occurs, the block is damaged and the method returns {@code true}.
      *
      * @param bulletHitbox the hitbox (bounding rectangle) of the bullet
-     * @return {@code true} if a collision occurred and a block was damaged,
-     *         {@code false} otherwise
+     * @return {@code true} if a collision occurred and a block was damaged, {@code false} otherwise
      */
     public boolean checkCollision(Rectangle bulletHitbox) {
         for (List<BarricadeBlock> row : grid) {

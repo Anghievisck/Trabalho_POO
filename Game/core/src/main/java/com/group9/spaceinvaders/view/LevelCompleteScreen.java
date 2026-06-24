@@ -9,6 +9,10 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
+/**
+ * Screen displayed when the player successfully defeats a swarm and transitions 
+ * to the next level.
+ */
 public class LevelCompleteScreen extends ScreenAdapter {
     private SpaceInvadersGame game;
     private int difficulty;
@@ -22,6 +26,20 @@ public class LevelCompleteScreen extends ScreenAdapter {
     private float displayTimer = 0f;
     private final float DISPLAY_DURATION = 3.0f; 
 
+    /**
+     * Constructs the Level Complete screen.
+     *
+     * @param game         the main game instance
+     * @param difficulty   the current difficulty
+     * @param twoPlayers   boolean indicating if it was a two-player game
+     * @param currentLevel the index of the level just completed
+     * @param p1Points     player 1 score to carry over
+     * @param p1Lives      player 1 lives to carry over
+     * @param p1Ammo       player 1 ammo to carry over
+     * @param p2Points     player 2 score to carry over
+     * @param p2Lives      player 2 lives to carry over
+     * @param p2Ammo       player 2 ammo to carry over
+     */
     public LevelCompleteScreen(SpaceInvadersGame game, int difficulty, boolean twoPlayers, int currentLevel,
                                 int p1Points, int p1Lives, int p1Ammo,
                                 int p2Points, int p2Lives, int p2Ammo) {
@@ -41,7 +59,7 @@ public class LevelCompleteScreen extends ScreenAdapter {
         font.getData().setScale(2.0f);
 
         Label.LabelStyle style = new Label.LabelStyle(font, Color.GREEN);
-        Label label = new Label("FASE CONCLUIDA!\n\nPreparando proxima horda...", style);
+        Label label = new Label("LEVEL COMPLETE!\n\nPreparing next horde...", style);
         label.setAlignment(com.badlogic.gdx.utils.Align.center);
         label.setPosition(400f - label.getWidth() / 2f, 300f - label.getHeight() / 2f);
 
@@ -57,7 +75,7 @@ public class LevelCompleteScreen extends ScreenAdapter {
 
         displayTimer += delta;
         if (displayTimer >= DISPLAY_DURATION) {
-            // Repassa false no último parâmetro para carregar a nova fase com layout original nativo
+            // Passes false in the last parameter to load the new level with the native original layout
             game.setScreen(new GameScreen(game, difficulty, twoPlayers, currentLevel + 1,
                     p1Points, p1Lives, p1Ammo, p2Points, p2Lives, p2Ammo, false));
         }

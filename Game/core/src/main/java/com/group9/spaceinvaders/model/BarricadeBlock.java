@@ -28,17 +28,14 @@ public class BarricadeBlock {
     private TextureRegion destroyedSprite; // usually transparent
 
     /**
-     * Constructs a new barricade block at the specified position with the given
-     * size.
+     * Constructs a new barricade block at the specified position with the given size.
      *
-     * @param x               the X coordinate of the top‑left corner (in world
-     *                        units)
-     * @param y               the Y coordinate of the top‑left corner
+     * @param x               the X coordinate of the top-left corner (in world units)
+     * @param y               the Y coordinate of the top-left corner
      * @param size            the side length of the square block
      * @param intactSprite    texture for the intact state
      * @param damagedSprite   texture for the damaged state
-     * @param destroyedSprite texture for the destroyed state (should be
-     *                        transparent/empty)
+     * @param destroyedSprite texture for the destroyed state (should be transparent/empty)
      */
     public BarricadeBlock(float x, float y, float size,
             TextureRegion intactSprite,
@@ -53,7 +50,7 @@ public class BarricadeBlock {
     }
 
     /**
-     * Damages the block, progressing from INTACT → DAMAGED → DESTROYED.
+     * Damages the block, progressing from INTACT -> DAMAGED -> DESTROYED.
      * If already DESTROYED, nothing happens.
      */
     public void damage() {
@@ -67,7 +64,7 @@ public class BarricadeBlock {
     }
 
     /**
-     * Instantly destroys the block (makes it invisible and non‑collidable).
+     * Instantly destroys the block (makes it invisible and non-collidable).
      */
     public void destroy() {
         state = State.DESTROYED;
@@ -106,8 +103,7 @@ public class BarricadeBlock {
     /**
      * Checks whether the block is destroyed.
      *
-     * @return {@code true} if the block is in DESTROYED state, {@code false}
-     *         otherwise
+     * @return {@code true} if the block is in DESTROYED state, {@code false} otherwise
      */
     public boolean isDestroyed() {
         return state == State.DESTROYED;

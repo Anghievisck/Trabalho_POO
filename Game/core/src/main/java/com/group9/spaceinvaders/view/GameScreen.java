@@ -38,6 +38,10 @@ import com.group9.spaceinvaders.controller.PlayerController;
 import com.group9.spaceinvaders.controller.BarricadeTextureGenerator;
 import com.group9.spaceinvaders.controller.SwarmController;
 
+/**
+ * The main gameplay screen containing the core game loop, rendering, 
+ * and entity management logic.
+ */
 public class GameScreen extends ScreenAdapter {
     private SpaceInvadersGame game;
     private boolean twoPlayers;
@@ -74,14 +78,36 @@ public class GameScreen extends ScreenAdapter {
     private int swarmIndex = 0;
     private float ammoSpawnTimer = 0f;
 
-    // Estado e Palco do Menu de Pausa
+    // Pause Menu state and stage
     private boolean isPaused = false;
     private Stage pauseStage;
 
+    /**
+     * Constructs a new game screen for a fresh session.
+     *
+     * @param game       the main game instance
+     * @param difficulty the difficulty level
+     * @param twoPlayers whether the game is played in local co-op
+     */
     public GameScreen(SpaceInvadersGame game, int difficulty, boolean twoPlayers) {
         this(game, difficulty, twoPlayers, 0, 0, 3, 5, 0, 3, 5, false);
     }
 
+    /**
+     * Constructs a game screen with specific states, useful for loading saves or transitioning levels.
+     *
+     * @param game         the main game instance
+     * @param difficulty   the difficulty level
+     * @param twoPlayers   whether the game is played in local co-op
+     * @param initialLevel the starting level/horde index
+     * @param p1Points     player 1 current score
+     * @param p1Lives      player 1 current lives
+     * @param p1Ammo       player 1 current ammo
+     * @param p2Points     player 2 current score
+     * @param p2Lives      player 2 current lives
+     * @param p2Ammo       player 2 current ammo
+     * @param loadFromSave whether the enemies should be loaded from the save file
+     */
     public GameScreen(SpaceInvadersGame game, int difficulty, boolean twoPlayers, int initialLevel,
                       int p1Points, int p1Lives, int p1Ammo,
                       int p2Points, int p2Lives, int p2Ammo, boolean loadFromSave) {
@@ -104,7 +130,7 @@ public class GameScreen extends ScreenAdapter {
         playerOne.ammo = p1Ammo;
         playerOneController = new PlayerController(game, playerOne);
 
-        if(this.twoPlayers){
+        if (this.twoPlayers) {
             playerTwo = new Player(500, 50, 50, 24, atlas.findRegion("player2"), bulletSprite, Input.Keys.A, Input.Keys.D, Input.Keys.W);
             playerTwo.points = p2Points;
             playerTwo.lives = p2Lives;
@@ -139,12 +165,12 @@ public class GameScreen extends ScreenAdapter {
         enemyBulletSpeeds.add(-300f);
         enemyBulletSpeeds.add(-350f);
 
-        for(int i = 0; i < 3; i++){
+        for (int i = 0; i < 3; i++) {
             swarms.add(new Swarm((float)50, (float)300, (float)30, (float)30, (float)15, (i + 1) * 1.5f * difficulty, enemySprites, 100, enemyBulletSprites, enemyBulletSpeeds));
             swarmControllers.add(new SwarmController(swarms.get(i), 800f, difficulty, game)); 
         }
 
-        // SE CARREGADO DE UM SAVE: Restaura as posições e vidas customizadas dos inimigos em tela
+        // IF LOADED FROM A SAVE: Restores the custom positions and health of enemies on screen
         if (loadFromSave) {
             Preferences prefs = Gdx.app.getPreferences("SpaceInvadersSaveFile");
             Swarm currentSwarm = swarms.get(swarmIndex);
@@ -157,7 +183,7 @@ public class GameScreen extends ScreenAdapter {
                     float savedX = prefs.getFloat("enemy_" + r + "_" + c + "_x", enemy.getX());
                     float savedY = prefs.getFloat("enemy_" + r + "_" + c + "_y", enemy.getY());
                     
-                    // Como setX/setY herdam comportamento incremental (+=), aplicamos a diferença vetorial
+                    // Since setX/setY inherit incremental behavior (+=), we apply the vector difference
                     enemy.setX(savedX - enemy.getX());
                     enemy.setY(savedY - enemy.getY());
                     enemy.health = prefs.getInteger("enemy_" + r + "_" + c + "_health", enemy.health);
@@ -175,8 +201,7 @@ public class GameScreen extends ScreenAdapter {
                         int stateOrdinal = prefs.getInteger("barricade_" + b + "_" + row + "_" + col,
                                 BarricadeBlock.State.INTACT.ordinal());
                         // Restore the state by damaging the block appropriately
-                        // We can't set state directly, so we call damage() until we reach the desired
-                        // state
+                        // We can't set state directly, so we call damage() until we reach the desired state
                         BarricadeBlock.State targetState = BarricadeBlock.State.values()[stateOrdinal];
                         while (block.getState() != targetState) {
                             block.damage();
@@ -186,7 +211,7 @@ public class GameScreen extends ScreenAdapter {
             }
         }
         
-        // Inicialização do HUD de jogo regular
+        // Regular game HUD initialization
         hudStage = new Stage(new FitViewport(800, 600));
         font = new BitmapFont(); 
         font.getData().setScale(1.2f); 
@@ -196,47 +221,47 @@ public class GameScreen extends ScreenAdapter {
         scoreLabelP1.setPosition(20, 560);
         hudStage.addActor(scoreLabelP1);
         
-        livesLabelP1 = new Label("Vidas: XXX", labelStyle);
+        livesLabelP1 = new Label("Lives: XXX", labelStyle);
         livesLabelP1.setPosition(120, 560);
         hudStage.addActor(livesLabelP1);
 
-        ammoLabelP1 = new Label("Ammo.: 5", labelStyle);
+        ammoLabelP1 = new Label("Ammo: 5", labelStyle);
         ammoLabelP1.setPosition(260, 560);
         hudStage.addActor(ammoLabelP1);
 
-        if(this.twoPlayers){
+        if (this.twoPlayers) {
             scoreLabelP2 = new Label("P2: 0", labelStyle);
             scoreLabelP2.setPosition(500, 560);
             hudStage.addActor(scoreLabelP2);
             
-            livesLabelP2 = new Label("Vidas: XXX", labelStyle);
+            livesLabelP2 = new Label("Lives: XXX", labelStyle);
             livesLabelP2.setPosition(600, 560);
             hudStage.addActor(livesLabelP2);
 
-            ammoLabelP2 = new Label("Ammo.: 5", labelStyle);
+            ammoLabelP2 = new Label("Ammo: 5", labelStyle);
             ammoLabelP2.setPosition(710, 560);
             hudStage.addActor(ammoLabelP2);
         }
 
-        // CONSTRUÇÃO DA INTERFACE DE PAUSA (DISPARADA POR 'ESC')
+        // PAUSE INTERFACE CONSTRUCTION (TRIGGERED BY 'ESC')
         pauseStage = new Stage(new FitViewport(800, 600));
         Skin skin = game.assets.get("ui/spaceinvaders.json", Skin.class);
         Table pauseTable = new Table();
         pauseTable.setFillParent(true);
 
-        TextButton btnRetomar = new TextButton("Retomar Jogo", skin);
-        TextButton btnSalvar = new TextButton("Salvar Progresso", skin);
-        TextButton btnMenu = new TextButton("Sair para o Menu", skin);
+        TextButton btnResume = new TextButton("Resume Game", skin);
+        TextButton btnSave = new TextButton("Save Progress", skin);
+        TextButton btnMenu = new TextButton("Exit to Menu", skin);
 
-        btnRetomar.addListener(new ChangeListener() {
+        btnResume.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 isPaused = false;
-                Gdx.input.setInputProcessor(null); // Libera o mouse do palco de pausa
+                Gdx.input.setInputProcessor(null); // Releases the mouse from the pause stage
             }
         });
 
-        btnSalvar.addListener(new ChangeListener() {
+        btnSave.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 saveGame();
@@ -250,12 +275,15 @@ public class GameScreen extends ScreenAdapter {
             }
         });
 
-        pauseTable.add(btnRetomar).width(280).height(45).padBottom(15).row();
-        pauseTable.add(btnSalvar).width(280).height(45).padBottom(15).row();
+        pauseTable.add(btnResume).width(280).height(45).padBottom(15).row();
+        pauseTable.add(btnSave).width(280).height(45).padBottom(15).row();
         pauseTable.add(btnMenu).width(280).height(45);
         pauseStage.addActor(pauseTable);
     }
 
+    /**
+     * Saves the current game state, including player stats, enemies, and barricades, into the preferences file.
+     */
     private void saveGame() {
         Preferences prefs = Gdx.app.getPreferences("SpaceInvadersSaveFile");
         prefs.putBoolean("hasSave", true);
@@ -273,7 +301,7 @@ public class GameScreen extends ScreenAdapter {
             prefs.putInteger("p2Ammo", playerTwo.ammo);
         }
 
-        // SALVAMENTO COMPLETO DOS INIMIGOS
+        // COMPLETE ENEMY SAVING
         Swarm currentSwarm = swarms.get(swarmIndex);
         prefs.putInteger("swarmAliveCount", currentSwarm.aliveCount);
         prefs.putBoolean("movingRight", currentSwarm.movingRight);
@@ -301,54 +329,54 @@ public class GameScreen extends ScreenAdapter {
         }
         
         prefs.flush(); 
-        System.out.println("Jogo e posição dos inimigos salvos com sucesso via Menu de Pausa!");
+        System.out.println("Game and enemy positions saved successfully via Pause Menu!");
     }
 
     @Override
     public void render(float delta) {
-        // Captura a tecla ESC para alternar o estado de Pausa do jogo
+        // Captures the ESC key to toggle the game's Pause state
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
             isPaused = !isPaused;
             if (isPaused) {
-                Gdx.input.setInputProcessor(pauseStage); // Transfere cliques de mouse para o menu de pausa
+                Gdx.input.setInputProcessor(pauseStage); // Transfers mouse clicks to the pause menu
             } else {
                 Gdx.input.setInputProcessor(null);
             }
         }
 
-        // --- LÓGICA ATUALIZADA APENAS SE NÃO ESTIVER EM PAUSA ---
+        // --- LOGIC UPDATED ONLY IF NOT PAUSED ---
         if (!isPaused) {
 
             float ammoSpawnLimit = this.twoPlayers ? 2.0f : 4.0f;
             ammoSpawnTimer += delta;
 
-            if(ammoSpawnTimer >= ammoSpawnLimit) { // Usamos o novo limite dinâmico
-                    ammoSpawnTimer = 0f;
-                    float randomX = com.badlogic.gdx.math.MathUtils.random(20f, 780f); 
-                    activeDrops.add(new AmmoDrop(randomX, 50f, 30, 15, ammoSprite));
+            if (ammoSpawnTimer >= ammoSpawnLimit) { // We use the new dynamic limit
+                ammoSpawnTimer = 0f;
+                float randomX = com.badlogic.gdx.math.MathUtils.random(20f, 780f); 
+                activeDrops.add(new AmmoDrop(randomX, 50f, 30, 15, ammoSprite));
             }
 
             playerOneController.update(delta, activeBullets); 
             scoreLabelP1.setText("P1: " + playerOne.points);
-            livesLabelP1.setText("Vidas: " + formatarVidas(playerOne.lives));
-            ammoLabelP1.setText("Mun: " + playerOne.ammo);
+            livesLabelP1.setText("Lives: " + formatLives(playerOne.lives));
+            ammoLabelP1.setText("Ammo: " + playerOne.ammo);
 
-            if(this.twoPlayers){
+            if (this.twoPlayers) {
                 playerTwoController.update(delta, activeBullets); 
                 scoreLabelP2.setText("P2: " + playerTwo.points);
-                livesLabelP2.setText("Vidas: " + formatarVidas(playerTwo.lives));
-                ammoLabelP2.setText("Mun: " + playerTwo.ammo);
+                livesLabelP2.setText("Lives: " + formatLives(playerTwo.lives));
+                ammoLabelP2.setText("Ammo: " + playerTwo.ammo);
             }
 
             swarmControllers.get(swarmIndex).update(delta, activeBullets, activeDrops); 
 
-            // CONDIÇÃO: INIMIGOS CHEGAM ATÉ VOCÊ OU ATRAVESSAM A LINHA DO JOGADOR -> GAME OVER
+            // CONDITION: ENEMIES REACH YOU OR CROSS THE PLAYER'S LINE -> GAME OVER
             Swarm currentSwarm = swarms.get(swarmIndex);
             for (int r = 0; r < currentSwarm.rows; r++) {
                 for (int c = 0; c < currentSwarm.cols; c++) {
                     Enemy enemy = currentSwarm.enemies[r][c];
                     if (enemy != null && enemy.health > 0) {
-                        // Verifica colisão direta com as hitboxes das naves ou se desceram além de Y=50 (eixo do player)
+                        // Checks direct collision with the ship's hitboxes or if they went below Y=50 (player axis)
                         if ((playerOne.lives > 0 && enemy.getHitbox().overlaps(playerOne.getHitbox())) || enemy.getY() <= 50f) {
                             game.setScreen(new GameOverScreen(game, false, twoPlayers, this.difficulty));
                             return;
@@ -361,9 +389,9 @@ public class GameScreen extends ScreenAdapter {
                 }
             }
 
-            // Verificação de Derrota tradicional (Sem vidas)
-            if(this.twoPlayers){
-                if(playerOne.lives <= 0 && playerTwo.lives <= 0){
+            // Traditional defeat check (No lives)
+            if (this.twoPlayers) {
+                if (playerOne.lives <= 0 && playerTwo.lives <= 0) {
                     game.setScreen(new GameOverScreen(game, false, twoPlayers, this.difficulty));
                     return;
                 }
@@ -374,11 +402,11 @@ public class GameScreen extends ScreenAdapter {
                 }
             }
 
-            // Transição de Nível / Vitória da Horda
-            if(swarms.get(swarmIndex).aliveCount <= 0){
+            // Level Transition / Horde Victory
+            if (swarms.get(swarmIndex).aliveCount <= 0) {
                 playerOne.points += 100; 
                 playerOne.lives += 1;
-                if(twoPlayers){
+                if (twoPlayers) {
                     playerTwo.points += 100;
                     playerTwo.lives += 1;
                 }
@@ -397,7 +425,7 @@ public class GameScreen extends ScreenAdapter {
             }
         }
 
-        // --- DESENHO / GRÁFICOS (Continua renderizando mesmo pausado) ---
+        // --- DRAWING / GRAPHICS (Continues rendering even when paused) ---
         ScreenUtils.clear(0, 0, 0, 1);
 
         camera.update();
@@ -420,24 +448,24 @@ public class GameScreen extends ScreenAdapter {
 
         barricadeManager.draw(batch);
 
-        // Drops e Balas atualizam a física apenas se o jogo não estiver pausado
+        // Drops and Bullets update physics only if the game is not paused
         Iterator<AmmoDrop> dropIter = activeDrops.iterator();
-        while(dropIter.hasNext()){
+        while (dropIter.hasNext()) {
             AmmoDrop drop = dropIter.next();
             if (!isPaused) drop.update(delta);
             drop.draw(batch);
 
-            if(!isPaused && playerOne.lives > 0 && playerOne.getHitbox().overlaps(drop.getHitbox())){
+            if (!isPaused && playerOne.lives > 0 && playerOne.getHitbox().overlaps(drop.getHitbox())) {
                 playerOne.ammo += 3;
                 drop.isCollected = true;
             }
 
-            if(!isPaused && this.twoPlayers && playerTwo.lives > 0 && playerTwo.getHitbox().overlaps(drop.getHitbox())){
+            if (!isPaused && this.twoPlayers && playerTwo.lives > 0 && playerTwo.getHitbox().overlaps(drop.getHitbox())) {
                 playerTwo.ammo += 3;
                 drop.isCollected = true;
             }
 
-            if(drop.isCollected){
+            if (drop.isCollected) {
                 dropIter.remove();
             }
         }
@@ -462,20 +490,26 @@ public class GameScreen extends ScreenAdapter {
 
         batch.end();
 
-        // Desenha a interface do HUD principal
+        // Draws the main HUD interface
         hudStage.act(delta);
         hudStage.draw();
 
-        // Se estiver em modo de Pausa, desenha a janela Menu por cima de tudo
+        // If in Pause mode, draws the Menu window on top of everything
         if (isPaused) {
             pauseStage.act(delta);
             pauseStage.draw();
         }
     }
 
-    private String formatarVidas(int quantidadeVidas) {
+    /**
+     * Formats the life count into a string of "X " characters.
+     *
+     * @param lifeCount the player's life count
+     * @return a formatted string representing lives
+     */
+    private String formatLives(int lifeCount) {
         StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < Math.max(0, quantidadeVidas); i++) {
+        for (int i = 0; i < Math.max(0, lifeCount); i++) {
             sb.append("X "); 
         }
         return sb.toString();
@@ -492,7 +526,7 @@ public class GameScreen extends ScreenAdapter {
     public void dispose() {
         batch.dispose(); 
         hudStage.dispose();
-        pauseStage.dispose(); // Descarta o palco de pausa de forma limpa
+        pauseStage.dispose(); // Discards the pause stage cleanly
         font.dispose();
     }
 }
