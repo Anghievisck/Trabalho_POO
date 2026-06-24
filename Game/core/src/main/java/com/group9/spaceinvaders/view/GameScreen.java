@@ -405,11 +405,13 @@ public class GameScreen extends ScreenAdapter {
             // Level Transition / Horde Victory
             if (swarms.get(swarmIndex).aliveCount <= 0) {
                 playerOne.points += 100; 
-                playerOne.lives += 1;
+                playerOne.heal(1);
                 if (twoPlayers) {
                     playerTwo.points += 100;
-                    playerTwo.lives += 1;
+                    playerTwo.heal(1);
                 }
+
+                difficulty++;
                 
                 if (swarmIndex < 2) {
                     game.setScreen(new LevelCompleteScreen(game, difficulty, twoPlayers, swarmIndex, 
@@ -442,6 +444,7 @@ public class GameScreen extends ScreenAdapter {
                 Enemy enemy = currentSwarm.enemies[r][c];
                 if (enemy != null && enemy.health > 0) {
                     enemy.draw(batch);
+                    barricadeManager.checkEnemyCollision(enemy);
                 }
             }
         }

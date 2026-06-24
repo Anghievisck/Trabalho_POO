@@ -98,13 +98,13 @@ public class BarricadeManager {
         if (enemy.health <= 0) {
             return false;
         }
+
         for (Barricade barricade : barricades) {
             if (barricade.checkCollision(enemy.getHitbox())) {
-                enemy.health = 0;
-                removeBarricade(barricade);
                 return true;
             }
         }
+
         return false;
     }
 

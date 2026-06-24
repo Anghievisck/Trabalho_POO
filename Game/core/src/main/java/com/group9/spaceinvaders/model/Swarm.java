@@ -48,16 +48,20 @@ public class Swarm {
         enemySprites = sprites;
         
         int enemyType;
+        int enemyHealthModdifier;
 
         // Fills the grid with enemies
         for (int r = 0; r < rows; r++) {
             // Assigns alien type based on row index
             if (r == 0) {
                 enemyType = 4;
+                enemyHealthModdifier = 2;
             } else if (r < 3) {
                 enemyType = 2;
+                enemyHealthModdifier = 1;
             } else {
                 enemyType = 0;
+                enemyHealthModdifier = 0;
             }
 
             for (int c = 0; c < cols; c++) {
@@ -67,7 +71,7 @@ public class Swarm {
                 // In libGDX, Y grows upwards. Here we place row 0 at the top.
                 float enemyY = startY + totalHeight - enemyHeight - (r * (enemyHeight + padding));
                 
-                enemies[r][c] = new Enemy(enemyX, enemyY, enemyWidth, enemyHeight, sprites.get(enemyType), maxHealth, bulletSprites.get(0), bulletSpeed.get(enemyType % 3));
+                enemies[r][c] = new Enemy(enemyX, enemyY, enemyWidth, enemyHeight, sprites.get(enemyType), maxHealth + (100 * enemyHealthModdifier), bulletSprites.get(0), bulletSpeed.get(enemyType % 3));
             }
         }
     }

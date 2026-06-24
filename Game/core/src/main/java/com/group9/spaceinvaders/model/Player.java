@@ -81,6 +81,14 @@ public class Player extends Entity {
         return false;
     }
 
+    public void heal(int heal){
+        if(this.lives + heal <= 3){
+            this.lives += heal;
+        } else {
+            this.lives = 3;
+        }
+    }
+
     /**
      * Activates a temporary invulnerability window for the player.
      */
