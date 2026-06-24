@@ -1,68 +1,79 @@
-# Space Invaders - Trabalho de POO
+# Space Invaders - Comprehensive Project Report
 
-Este projeto é uma recriação expandida do clássico jogo arcade **Space Invaders**, desenvolvido em **Java** utilizando o framework **LibGDX**. O projeto foi construído sob o padrão arquitetural **MVC (Model-View-Controller)**, com forte ênfase na aplicação dos pilares da Programação Orientada a Objetos (POO).
+**Group Identification: Group 9**
+* Gabriel Inumaru Esteves - USP Number: 15453487
+* Matheus Spineli de Paiva - USP Number: 14598682
+* Pedro Luís Anghievisck - USP Number: 15656521
 
-## 🚀 Funcionalidades e Mecânicas de Jogo
+---
 
-* **Single-player e Multiplayer Co-op:** Suporte para 1 ou 2 jogadores simultâneos com controles independentes.
-* **Sistema de Munição e Drops:** Jogadores começam com munição limitada. Pacotes de munição (`AmmoDrop`) surgem na tela aleatoriamente e desaparecem caso não sejam coletados em 8 segundos.
-* **Invulnerabilidade (*I-frames*):** Ao perder uma vida, o jogador ganha 2.0 segundos de invulnerabilidade temporal, acompanhada de um efeito visual de piscar (*blinking*).
-* **Barricadas Destrutíveis:** 4 barricadas distribuídas no cenário protegem os jogadores. Elas são formadas por uma malha de 6x8 blocos que desenham o formato clássico do arcade. Cada bloco individual possui 3 estados de degradação: Intacto, Danificado e Destruído.
-* **Enxame Dinâmico (Swarm):** Matriz de inimigos 5x11 composta por 3 tipos distintos de alienígenas (Squid, Octopus e Crab), cada um com pontuações e atributos diferentes. A velocidade do enxame e a cadência dos tiros aumentam de acordo com o nível de dificuldade.
-* **Save/Load System:** Pausa do jogo (tecla `ESC`) permitindo salvar o estado exato da partida (vidas, posição pixel a pixel dos inimigos, estados individuais dos blocos das barricadas e munição) utilizando o `Preferences` do LibGDX.
+## 1. Requirements
 
-## 🏗️ Arquitetura Orientada a Objetos (MVC)
+The application is a comprehensive 2D Space Invaders clone that strictly fulfills all assigned academic requirements:
+* **Framework:** Utilizes LibGDX for screen management, asset loading, and 2D graphics rendering.
+* **Core Mechanics:** Accurate entity movement, shooting logic, and strict Rectangle-based collision detection.
+* **Multiplayer:** Features a local two-player cooperative mode (Player 1 and Player 2) sharing the same screen but maintaining individual controls, coordinate tracking, and independent life counters.
+* **Progression System:** A 3-level progression system (Swarm index 0 to 2) with increasing difficulty. Swarm speed and shooting frequency scale mathematically based on the difficulty multiplier.
+* **Game Loop & State:** Real-time scoring, dynamic HUD updates, and seamless transitions between multiple states.
+* **Persistence:** A persistent Save/Load system to write and read game progress natively.
 
-### 1. Model (`com.group9.spaceinvaders.model`)
-O coração das regras de negócio e aplicação de herança e composição. Todo cálculo de hitbox, posicionamento espacial (`x`, `y`) e lógica de sobreposição é feito utilizando a classe `Rectangle` do LibGDX.
+### 🌟 Extra Feature: Unique Ammunition Management System
+Instead of the traditional infinite shooting mechanic, we introduced a unique ammunition management system. Players start with limited ammo and must strategically catch random **Ammo Drops** (`AmmoDrop.java`) that spawn dynamically across the screen. These drops rotate 90 degrees graphically, stay on the ground for exactly 8.0 seconds, and add 3 bullets to the player's inventory upon collection, adding a deep layer of resource management to the core gameplay.
 
-* **`Entity` (Classe Abstrata):** Define a base de todas as entidades visíveis no jogo. Encapsula as posições e amarra automaticamente o `hitbox` à coordenada espacial atualizada. Força a implementação do método `update(delta)` via polimorfismo.
-* **`Player`, `Enemy`, `Bullet`, `AmmoDrop` (Herança):** Extensões concretas de `Entity`.
-  * `Bullet` possui o atributo `origin` para distinguir quem disparou o projétil, evitando que os alienígenas (ou os próprios jogadores) sofram dano de fogo amigo.
-* **`Swarm` (Composição):** Agrupa os inimigos em uma matriz bi-dimensional, gerenciando a movimentação lateral unificada, a descida em bloco (quando tocam as bordas) e controlando o total de alienígenas vivos.
-* **Sistema de Barricadas (Composição Escalonada):** 
-  * `BarricadeBlock`: Usa um `Enum` (`State`) para transitar entre texturas (Intacto, Danificado, Destruído).
-  * `Barricade`: Organiza os blocos em uma lista bidimensional respeitando o design clássico de "arco" (removendo blocos específicos na matriz).
-  * `BarricadeManager`: Controla o espaçamento dinâmico e o roteamento de checagem de colisão com os tiros para todas as barricadas ativas simultaneamente.
+---
 
-### 2. View (`com.group9.spaceinvaders.view`)
-Responsável pela interface gráfica e o gameloop principal, estendendo o `ScreenAdapter`.
-* Renderiza as camadas do jogo de forma limpa.
-* O HUD desenha pontuações, munição e vidas via `Stage` e `Label`.
-* **Telas:** `MainMenuScreen`, `GameScreen` (Renderização da batalha), `LevelCompleteScreen` e `GameOverScreen`.
+## 2. Project Description
 
-### 3. Controller (`com.group9.spaceinvaders.controller`)
-Atua como o elo entre os inputs do usuário/sistema e o Model.
-* `PlayerController`: Monitora inputs de teclado e resolve as colisões dos projéteis inimigos contra o `Player`, disparando sons via `AssetManager`.
-* `SwarmController`: Define qual alienígena específico fará o disparo em cada intervalo de tempo de forma pseudoaleatória. Altera as animações/sprites do enxame a cada passo dado.
-* `BarricadeTextureGenerator`: Gera texturas em *runtime* (proceduralmente usando `Pixmap`) para os blocos da barricada, garantindo diferentes tonalidades de cinza conforme sofrem dano.
+### 2.1 Brief Architecture & Description
+Developed in Java using the LibGDX framework, players control spaceships at the bottom of the screen to defend against alien formations (`Swarm`) that move downwards and shoot periodically. 
 
-## 💻 Tecnologias e Padrões Utilizados
+The application utilizes a rigorous **MVC (Model-View-Controller)** architecture:
+* **Model (`model` package):** Handles spatial data, `Rectangle` hitboxes, and business logic (`Entity`, `Player`, `Enemy`, `Barricade`, etc.).
+* **View (`view` package):** Manages screen states via `ScreenAdapter` (`MainMenuScreen`, `GameScreen`, `GameOverScreen`, `LevelCompleteScreen`) and renders the UI using LibGDX `Stage` and `Table`.
+* **Controller (`controller` package):** Intermediates input and logic (`PlayerController`, `SwarmController`, `BarricadeTextureGenerator`).
 
-* **Linguagem:** Java 11+
-* **Engine/Framework:** [LibGDX](https://libgdx.com/)
-* **Padrões de Projeto Notáveis:**
-  * **MVC:** Separação clara de responsabilidades.
-  * **Game Loop:** Utilização padrão de `render(float delta)` para atualizações atreladas ao tempo (*frame-rate independent*).
-  * **State Machine (simples):** Usado via `Enum` no bloqueio das barricadas.
+The game tracks real-time scores and lives, ending the game *only* when all player lives are lost or if the alien swarm breaches the player's Y-axis defense line (Y <= 50f).
 
-## 🎮 Controles
+### 2.2 OOP Concepts Applied
+* **Composition:** 
+  * The `Swarm` class is composed of a 2D array (`Enemy[][]`) of `Enemy` objects. It acts as a manager for the entire 5x11 grid, moving them as a single global unit while still allowing individual enemies to maintain their own health, collision logic, and sprite states (e.g., Crab, Octopus, Squid).
+  * *Extended Composition:* The `BarricadeManager` contains a `List<Barricade>`, and each `Barricade` contains a 2D `List<List<BarricadeBlock>>`.
+* **Polymorphism:** 
+  * Demonstrated graphically in the `AmmoDrop` class, which overrides the `draw(SpriteBatch batch)` method from the abstract `Entity` class to render its sprite rotated by 90 degrees.
+  * Demonstrated logically via the `update(float delta)` abstract method, which forces unique physics updates across `Player`, `Bullet`, and `AmmoDrop`.
+  * Collision checks dynamically evaluate the `origin` property of a `Bullet` using the `instanceof` keyword (e.g., `bullet.origin instanceof Enemy`) to distinguish friendly fire from enemy attacks, avoiding self-damage.
+* **Encapsulation:** Spatial coordinates (`x`, `y`) are hidden within the `Entity` class. Direct modification is restricted, forcing subclasses to use specific spatial setters that guarantee physical consistency.
 
-### Jogador 1
-* **Mover Esquerda / Direita:** `Setas Direcionais` ⬅️ ➡️
-* **Atirar:** `Seta para Cima` ⬆️
+---
 
-### Jogador 2 (Multiplayer)
-* **Mover Esquerda / Direita:** `A` / `D`
-* **Atirar:** `W`
+## 3. Comments About the Code (Technical Details)
 
-### Gerais
-* **Pausar / Menu:** `ESC`
+* **Hitbox Synchronization:** To prevent collision bugs and "ghosting", the abstract `Entity` class encapsulates positional data. By using `protected` methods (`updateHitbox()`), the bounding box (`Rectangle`) is automatically and strictly synced whenever `setX()` or `setY()` are called by any subclasses.
+* **Safe Object Removal (Flags):** We use boolean flags like `isValid` in `Bullet` and `isCollected` in `AmmoDrop`. Instead of forcefully removing objects from memory the exact moment they collide (which breaks the render loop), we flag them as invalid. An `Iterator` in the main loop (`GameScreen.render`) safely sweeps and removes them later, ensuring memory safety.
+* **Procedural Texture Generation:** We implemented `BarricadeTextureGenerator` to dynamically create textures at runtime using LibGDX's `Pixmap`. This allows Barricade blocks to visually degrade from *Intact* (Light Grey) to *Damaged* (Dark Grey) to *Destroyed* (Transparent) using an Enum `State` machine.
+* **I-Frames Logic:** Player invulnerability was manually coded. Upon losing a life, a 2.0-second timer is triggered. During this window, `Player.draw()` multiplies the timer by 15 and uses a modulus operator (`% 2`) to create a classic arcade "blinking" effect while ignoring new collisions.
 
-## 🛠️ Como Executar o Projeto
+---
 
-Certifique-se de ter o **Java JDK 11 ou superior** instalado na sua máquina.
+## 4. Testing (Plan & Results)
 
-1. Clone o repositório:
+The test plan utilizes the **JUnit** framework (specifically `GameLogicTest`) to validate core mathematical and physical interactions without requiring the LibGDX graphical context (*headless testing*). 
+
+Tests heavily focus on:
+1. Hitbox synchronization precision.
+2. Accurate collision detection between player hitboxes and enemy bullets.
+3. Proper instantiation and coordinate mapping of enemies within a generated `Swarm` grid.
+
+**Results:** All automated tests passed successfully, confirming that the collision logic robustly ignores inactive entities (e.g., dead enemies and destroyed bullets do not trigger false positive collisions or crash the physics engine).
+
+---
+
+## 5. Build Procedures
+
+To run this application locally from the source:
+
+1. Ensure you have the latest **Java Development Kit (JDK 26+)** and `make` installed on your system.
+2. Clone the repository containing the source code and graphical/audio assets.
 ```bash
    git clone [https://github.com/Anghievisck/Trabalho_POO.git](https://github.com/Anghievisck/Trabalho_POO.git)
+   cd Trabalho_POO
