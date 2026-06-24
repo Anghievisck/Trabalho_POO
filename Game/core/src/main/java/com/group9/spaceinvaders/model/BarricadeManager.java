@@ -69,14 +69,39 @@ public class BarricadeManager {
     }
 
     /**
-     * Checks for collision between a bullet and any barricade managed by this manager.
+     * Checks for collision between a bullet and any barricade managed by this
+     * manager.
      *
      * @param bulletHitbox the hitbox (bounding rectangle) of the bullet
-     * @return {@code true} if a collision occurred with any barricade, {@code false} otherwise
+     * @return {@code true} if a collision occurred with any barricade,
+     *         {@code false} otherwise
      */
     public boolean checkBulletCollision(Rectangle bulletHitbox) {
         for (Barricade barricade : barricades) {
             if (barricade.checkCollision(bulletHitbox)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Checks for collision between an enemy and any barricade managed by this
+     * manager;
+     * In case of collision, destroys both enemy and barricade.
+     *
+     * @param enemy the enemy checked
+     * @return {@code true} if there was a collision and the entities were
+     *         destroyed, {@code false} otherwise.
+     */
+    public boolean checkEnemyCollision(Enemy enemy) {
+        if (enemy.health <= 0) {
+            return false;
+        }
+        for (Barricade barricade : barricades) {
+            if (barricade.checkCollision(enemy.getHitbox())) {
+                enemy.health = 0;
+                removeBarricade(barricade);
                 return true;
             }
         }
@@ -103,7 +128,8 @@ public class BarricadeManager {
     }
 
     /**
-     * Moves all barricades by the given offset (useful for scrolling or dynamic positioning).
+     * Moves all barricades by the given offset (useful for scrolling or dynamic
+     * positioning).
      *
      * @param deltaX horizontal shift
      * @param deltaY vertical shift
