@@ -318,11 +318,14 @@ public class GameScreen extends ScreenAdapter {
 
         // --- LÓGICA ATUALIZADA APENAS SE NÃO ESTIVER EM PAUSA ---
         if (!isPaused) {
+
+            float ammoSpawnLimit = this.twoPlayers ? 2.0f : 4.0f;
             ammoSpawnTimer += delta;
-            if(ammoSpawnTimer >= 4.0f) {
-                ammoSpawnTimer = 0f;
-                float randomX = com.badlogic.gdx.math.MathUtils.random(20f, 780f); 
-                activeDrops.add(new AmmoDrop(randomX, 50f, 30, 15, ammoSprite));
+
+            if(ammoSpawnTimer >= ammoSpawnLimit) { // Usamos o novo limite dinâmico
+                    ammoSpawnTimer = 0f;
+                    float randomX = com.badlogic.gdx.math.MathUtils.random(20f, 780f); 
+                    activeDrops.add(new AmmoDrop(randomX, 50f, 30, 15, ammoSprite));
             }
 
             playerOneController.update(delta, activeBullets); 

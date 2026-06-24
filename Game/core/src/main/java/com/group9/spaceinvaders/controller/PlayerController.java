@@ -19,6 +19,7 @@ public class PlayerController {
     }
 
     public void update(float delta, List<Bullet> bullets) {
+        player.updateInvulnerability(delta);
         if(Gdx.input.isKeyPressed(player.leftKey)) {
             player.moveLeft(delta);
         }
@@ -36,7 +37,7 @@ public class PlayerController {
 
             bullets.add(novaBala);
             player.ammo--;
-
+            
             // Reproduz o som de tiro carregado no AssetManager
             if (game.assets.isLoaded("audio/sfx/shoot.wav", Sound.class)) {
                 game.assets.get("audio/sfx/shoot.wav", Sound.class).play(0.1f);
@@ -48,6 +49,8 @@ public class PlayerController {
                 if(player.checkCollision(bullet)){
                     bullet.isValid = false;
                     player.lives--;
+                    
+                    player.triggerInvulnerability();
 
                     // Reproduz o som de tiro carregado no AssetManager
                     if (game.assets.isLoaded("audio/sfx/explosion.wav", Sound.class)) {
