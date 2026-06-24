@@ -11,63 +11,74 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
+/**
+ * Screen displayed when the player loses all lives or the enemies reach the bottom.
+ */
 public class GameOverScreen extends ScreenAdapter {
-    // Responsável por desenhar na tela
+    // Responsible for drawing on the screen
     private Stage stage;
 
-    public GameOverScreen(SpaceInvadersGame game, boolean won, boolean twoPlayers, int difficulty){
-        // 1. Configurando o Stage e permitindo que ele receba os cliques do mouse
+    /**
+     * Constructs the Game Over screen.
+     *
+     * @param game       the main game instance
+     * @param won        boolean indicating if the game was won or lost (currently unused logic)
+     * @param twoPlayers boolean indicating if it was a two-player game
+     * @param difficulty the current difficulty level
+     */
+    public GameOverScreen(SpaceInvadersGame game, boolean won, boolean twoPlayers, int difficulty) {
+        // 1. Configuring the Stage and allowing it to receive mouse clicks
         stage = new Stage(new ScreenViewport());
         Gdx.input.setInputProcessor(stage);
 
-        // 2. Resgatando a nossa Skin diretamente do AssetManager central
+        // 2. Retrieving our Skin directly from the central AssetManager
         Skin skin = game.assets.get("ui/spaceinvaders.json", Skin.class);
 
-        // 3. Criando uma Table para organizar os botões automaticamente
+        // 3. Creating a Table to organize the buttons automatically
         Table table = new Table();
-        table.setFillParent(true); // Faz a tabela ocupar a tela inteira para centralizar tudo
+        table.setFillParent(true); // Makes the table fill the entire screen to center everything
 
-        TextButton btnTentarNovamente = new TextButton("Tentar Novamente", skin);
-        TextButton btnVoltar = new TextButton("Voltar para o Menu", skin);
+        TextButton btnTryAgain = new TextButton("Try Again", skin);
+        TextButton btnBackToMenu = new TextButton("Back to Menu", skin);
 
-        btnTentarNovamente.addListener(new ChangeListener() {
+        btnTryAgain.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 game.setScreen(new GameScreen(game, difficulty, twoPlayers));
             }
         });
 
-        btnVoltar.addListener(new ChangeListener() {
+        btnBackToMenu.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 game.setScreen(new MainMenuScreen(game));
             }
         });
 
-        // 6. Adicionando os botões na tabela (definindo o tamanho padrão e um espaçamento)
+        // 6. Adding the buttons to the table (setting default size and padding)
         float btnWidth = 300f;
         float btnHeight = 50f;
         float padding = 20f;
 
-        table.add(btnTentarNovamente).width(btnWidth).height(btnHeight).padBottom(padding).row();
-        table.add(btnVoltar).width(btnWidth).height(btnHeight).padBottom(padding).row();
+        table.add(btnTryAgain).width(btnWidth).height(btnHeight).padBottom(padding).row();
+        table.add(btnBackToMenu).width(btnWidth).height(btnHeight).padBottom(padding).row();
 
         stage.addActor(table);
     }
 
     @Override
     public void render(float delta) {
-        // Limpa a tela com o fundo preto
+        // Clears the screen with a black background
         ScreenUtils.clear(0f, 0f, 0f, 1);
 
-        // Atualiza a lógica da UI (animações, hover, cliques) e a desenha na tela
+        // Updates UI logic (animations, hover, clicks) and draws it on the screen
         stage.act(delta);
         stage.draw();
     }
 
     @Override
     public void resize(int width, int height) {
-        // Garante que a UI se reajuste caso o jogador redimensione a janela
+        // Ensures the UI readjusts if the player resizes the window
         stage.getViewport().update(width, height, true);
     }
 

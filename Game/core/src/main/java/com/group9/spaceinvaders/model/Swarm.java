@@ -12,6 +12,7 @@ public class Swarm {
     public int rows = 5;
     public int cols = 11;
     public float speed = 15; // Pixels por segundo
+
     public boolean movingRight = true; // Direção atual do movimento
     public int aliveCount = rows * cols; // Quantos inimigos ainda estão vivos
     
@@ -20,14 +21,14 @@ public class Swarm {
     // Quanto o swarm desce quando bate na parede
     public float dropDistance = 15f; 
 
-    public Swarm(float startX, float startY, float enemyWidth, float enemyHeight, float padding, float speedModifier,  List<TextureRegion> sprites, int maxHealth, List<TextureRegion> bulletSprites, List<Float> bulletSpeed) {
+    public Swarm(float startX, float startY, float enemyWidth, float enemyHeight, float padding, float difficulty,  List<TextureRegion> sprites, int maxHealth, List<TextureRegion> bulletSprites, List<Float> bulletSpeed) {
         enemies = new Enemy[rows][cols];
         
         // Calcula a largura e altura total do retângulo gigante do Swarm
         float totalHeight = (rows * enemyHeight) + ((rows - 1) * padding);
-        speed = speedModifier*speed;
+        speed = difficulty*speed;
         enemySprites = sprites;
-
+        
         int enemyType;
 
         // Preenche o grid com os inimigos

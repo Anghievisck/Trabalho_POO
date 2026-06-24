@@ -8,16 +8,29 @@ import com.group9.spaceinvaders.model.Enemy;
 import com.group9.spaceinvaders.view.SpaceInvadersGame;
 
 import java.util.List;
-
+/**
+ * Controller responsible for managing player inputs, movement, shooting mechanics,
+ * and handling collisions with enemy bullets.
+ */
 public class PlayerController {
     private Player player;
     private SpaceInvadersGame game;
-
+    /**
+     * Constructs a PlayerController for a specific player instance.
+     *
+     * @param game   the main game instance used to access assets
+     * @param player the player model to be controlled
+     */
     public PlayerController(SpaceInvadersGame game, Player player) {
         this.game = game;
         this.player = player;
     }
-
+    /**
+     * Updates the player's state based on user inputs and checks for collisions.
+     *
+     * @param delta   the time elapsed since the last frame
+     * @param bullets the list of active bullets currently in the game
+     */
     public void update(float delta, List<Bullet> bullets) {
         player.updateInvulnerability(delta);
         if(Gdx.input.isKeyPressed(player.leftKey)) {
@@ -38,7 +51,7 @@ public class PlayerController {
             bullets.add(novaBala);
             player.ammo--;
             
-            // Reproduz o som de tiro carregado no AssetManager
+            // Plays the shooting sound loaded in the AssetManager
             if (game.assets.isLoaded("audio/sfx/shoot.wav", Sound.class)) {
                 game.assets.get("audio/sfx/shoot.wav", Sound.class).play(0.1f);
             }
@@ -52,7 +65,7 @@ public class PlayerController {
                     
                     player.triggerInvulnerability();
 
-                    // Reproduz o som de tiro carregado no AssetManager
+                    // Plays the explosion sound loaded in the AssetManager
                     if (game.assets.isLoaded("audio/sfx/explosion.wav", Sound.class)) {
                         game.assets.get("audio/sfx/explosion.wav", Sound.class).play(0.4f);
                     }

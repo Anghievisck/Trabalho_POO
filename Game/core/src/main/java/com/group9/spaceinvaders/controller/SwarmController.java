@@ -12,7 +12,10 @@ import com.badlogic.gdx.audio.Sound;
 import java.util.ArrayList;
 import java.util.List;
 
-
+/**
+ * Controller responsible for managing the logic, movement, and shooting 
+ * behavior of the enemy swarm.
+ */
 public class SwarmController {
     private Swarm swarm;
     private float screenWidth;
@@ -21,19 +24,32 @@ public class SwarmController {
 
     private SpaceInvadersGame game;
 
-    // Novos controladores de tiro dos inimigos
+    // Enemy shooting controllers
     private float shootTimer = 0f;
     private float shootInterval; 
-
+    /**
+     * Constructs a SwarmController.
+     *
+     * @param swarm       the swarm model to control
+     * @param screenWidth the width of the screen to handle edge bouncing
+     * @param difficulty  the difficulty level which dictates the shooting rate
+     * @param game        the main game instance for asset access
+     */
     public SwarmController(Swarm swarm, float screenWidth, int difficulty, SpaceInvadersGame game) {
         this.swarm = swarm;
         this.screenWidth = screenWidth;
         this.game = game;
         
-        // A dificuldade dita a velocidade dos tiros do enxame
+        // Difficulty dictates the swarm's shooting rate
         this.shootInterval = Math.max(0.5f, 2.0f - (difficulty * 0.2f)); 
     }
-
+    /**
+     * Updates the swarm's position, handles enemy shooting logic, and checks collisions.
+     *
+     * @param delta         the time elapsed since the last frame
+     * @param activeBullets the list of active bullets in the game
+     * @param activeDrops   the list of active ammo drops in the game
+     */
     public void update(float delta, List<Bullet> activeBullets, List<AmmoDrop> activeDrops) {
         float moveX = swarm.speed * delta;
         if (!swarm.movingRight) {
@@ -43,23 +59,23 @@ public class SwarmController {
         boolean hitEdge = false;
         timeSinceLastSpriteUpdate += delta;
         
-        // Atualiza o relógio de tiro dos inimigos
+        // Updates the enemy shooting timer
         shootTimer += delta; 
 
         List<Bullet> enemyBulletsToSpawn = new ArrayList<>();
 
-        // Lógica para decidir se um inimigo atira neste exato frame
+        // Logic to decide if an enemy shoots in this exact frame
         boolean willShootThisFrame = false;
         int targetEnemyToShoot = 0;
         
         if (shootTimer >= shootInterval && swarm.aliveCount > 0) {
             willShootThisFrame = true;
             shootTimer = 0f;
-            // Sorteia um dos inimigos vivos para efetuar o disparo
+            // Randomly selects one of the alive enemies to shoot
             targetEnemyToShoot = MathUtils.random(1, swarm.aliveCount);
         }
 
-        int aliveCounter = 0; // Contador auxiliar para achar o atirador sorteado
+        int aliveCounter = 0; // Auxiliary counter to find the selected shooter
 
         int enemyType;
         for (int r = 0; r < swarm.rows; r++) {
@@ -67,7 +83,7 @@ public class SwarmController {
                 Enemy enemy = swarm.enemies[r][c];
 
                 if (enemy.health > 0) {
-                    aliveCounter++; // Conta apenas os vivos
+                    aliveCounter++; // Counts only alive enemies
 
                     if(r == 0){
                         enemyType = 4;
@@ -83,14 +99,14 @@ public class SwarmController {
 
                     Rectangle hitbox = enemy.getHitbox();
 
-                    // Verifica se o enxame bateu na parede
+                    // Checks if the swarm hit the wall
                     if (swarm.movingRight && (hitbox.x + hitbox.width + moveX > screenWidth)) {
                         hitEdge = true;
                     } else if (!swarm.movingRight && (hitbox.x + moveX < 0)) {
                         hitEdge = true;
                     }
 
-                    // Checa se tomou tiro do Player
+                    // Checks if hit by a Player's bullet
                     for (Bullet bullet : activeBullets) {
                         if (bullet.origin instanceof Player) {
                             Player player = (Player) bullet.origin;
@@ -99,10 +115,9 @@ public class SwarmController {
                                 bullet.isValid = false;
 
                                 if (enemy.health <= 0) {
-                                    // A munição não "dropa" mais daqui
                                     swarm.aliveCount--; 
 
-                                    // Reproduz o som de tiro carregado no AssetManager
+                                    // Plays the explosion sound loaded in the AssetManager
                                     if (game.assets.isLoaded("audio/sfx/explosion.wav", Sound.class)) {
                                         game.assets.get("audio/sfx/explosion.wav", Sound.class).play(0.4f);
                                     }
@@ -113,7 +128,7 @@ public class SwarmController {
                         }
                     }
 
-                    // Se este for o inimigo sorteado, ele cria uma bala
+                    // If this is the selected enemy, it creates a bullet
                     if (willShootThisFrame && aliveCounter == targetEnemyToShoot) {
                         enemyBulletsToSpawn.add(new Bullet(
                             enemy.getX() + (enemy.getWidth() / 2), 

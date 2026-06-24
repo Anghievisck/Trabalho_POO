@@ -98,7 +98,7 @@ public class GameScreen extends ScreenAdapter {
         TextureRegion bulletSprite = atlas.findRegion("bullet_placeholder");
         ammoSprite = atlas.findRegion("ammo_drop");
 
-        playerOne = new Player(200, 50, 50, 24, atlas.findRegion("player1"), bulletSprite, Input.Keys.LEFT, Input.Keys.RIGHT, Input.Keys.SPACE);
+        playerOne = new Player(200, 50, 50, 24, atlas.findRegion("player1"), bulletSprite, Input.Keys.LEFT, Input.Keys.RIGHT, Input.Keys.UP);
         playerOne.points = p1Points;
         playerOne.lives = p1Lives;
         playerOne.ammo = p1Ammo;
