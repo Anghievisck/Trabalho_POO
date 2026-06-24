@@ -27,7 +27,7 @@ public class AmmoDrop extends Entity {
         if (sprite != null) {
             // Desenha a sprite rotacionada em 90 graus
             batch.draw(sprite, getX(), getY(), getWidth() / 2, getHeight() / 2, 
-                       getWidth(), getHeight(), 1f, 1f, 90f);
+                       getWidth(), getHeight(), 1f, 1f, 0f);
         }
     }
 }

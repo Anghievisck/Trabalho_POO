@@ -69,6 +69,8 @@ public class GameScreen extends ScreenAdapter {
     private Label ammoLabelP2;
     private BitmapFont font;
 
+    private TextureRegion ammoSprite;
+
     private int swarmIndex = 0;
     private float ammoSpawnTimer = 0f;
 
@@ -94,6 +96,7 @@ public class GameScreen extends ScreenAdapter {
 
         TextureAtlas atlas = game.assets.get("sprites/gameplay.atlas", TextureAtlas.class);
         TextureRegion bulletSprite = atlas.findRegion("bullet_placeholder");
+        ammoSprite = atlas.findRegion("ammo_drop");
 
         playerOne = new Player(200, 50, 50, 24, atlas.findRegion("player1"), bulletSprite, Input.Keys.LEFT, Input.Keys.RIGHT, Input.Keys.SPACE);
         playerOne.points = p1Points;
@@ -197,7 +200,7 @@ public class GameScreen extends ScreenAdapter {
         livesLabelP1.setPosition(120, 560);
         hudStage.addActor(livesLabelP1);
 
-        ammoLabelP1 = new Label("Mun.: 5", labelStyle);
+        ammoLabelP1 = new Label("Ammo.: 5", labelStyle);
         ammoLabelP1.setPosition(260, 560);
         hudStage.addActor(ammoLabelP1);
 
@@ -210,7 +213,7 @@ public class GameScreen extends ScreenAdapter {
             livesLabelP2.setPosition(600, 560);
             hudStage.addActor(livesLabelP2);
 
-            ammoLabelP2 = new Label("Mun.: 5", labelStyle);
+            ammoLabelP2 = new Label("Ammo.: 5", labelStyle);
             ammoLabelP2.setPosition(710, 560);
             hudStage.addActor(ammoLabelP2);
         }
@@ -319,7 +322,7 @@ public class GameScreen extends ScreenAdapter {
             if(ammoSpawnTimer >= 4.0f) {
                 ammoSpawnTimer = 0f;
                 float randomX = com.badlogic.gdx.math.MathUtils.random(20f, 780f); 
-                activeDrops.add(new AmmoDrop(randomX, 50f, 15, 30, playerOne.bulletSprite));
+                activeDrops.add(new AmmoDrop(randomX, 50f, 30, 15, ammoSprite));
             }
 
             playerOneController.update(delta, activeBullets); 

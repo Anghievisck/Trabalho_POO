@@ -53,9 +53,16 @@ alien_squid2
   orig: 50, 50
   offset: 0, 0
   index: -1
-bullet_placeholder
+ammo_drop
   rotate: false
   xy: 408, 11
+  size: 30, 15
+  orig: 30, 15
+  offset: 0, 0
+  index: -1
+bullet_placeholder
+  rotate: false
+  xy: 440, 11
   size: 5, 15
   orig: 5, 15
   offset: 0, 0
